@@ -93,7 +93,7 @@ namespace Beat_Saber_downgrader
                         txtbox.ScrollToEnd();
                     });
                     versions = finished;
-                    File.WriteAllText(exe + "versions.json", JsonSerializer.Serialize(versions)); ;
+                    File.WriteAllText(exe + "versions.json", JsonSerializer.Serialize(versions, new JsonSerializerOptions { WriteIndented = true }));
                 } catch
                 {
                     this.Dispatcher.Invoke(() =>
@@ -375,7 +375,7 @@ namespace Beat_Saber_downgrader
                     txtbox.ScrollToEnd();
                     if (v.SourceByteSize < v.TargetByteSize)
                     {
-                        txtbox.AppendText("\n\nI'm sorry. Due to the source file has to be as big as the target one or bigger to stay legal-ish");
+                        txtbox.AppendText("\n\nI'm sorry. Due to the source file having to be as big as the target one or bigger to not distribute game code I can't do that for you");
                         txtbox.ScrollToEnd();
                         FreeConsole();
                         return;
