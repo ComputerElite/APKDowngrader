@@ -2,7 +2,7 @@
 And program to create and use downgrade/update files for apks
 
 ## How does it work?
-It XORs the 2 apks to get the differences. Then it just XORs your apk with the downgrading file and you get a downgraded apk without ever doenloading it's code. For more info read [this wikipedia article](https://en.wikipedia.org/wiki/One-time_pad)
+It XORs the 2 apks to get the differences. Then it just XORs your apk with the downgrading file and you get a downgraded apk without ever doenloading it's code. For more info read [this wikipedia article](https://en.wikipedia.org/wiki/One-time_pad) as it#s based on One-time pads.
 
 ## Usage
 ### How do I downgrade when I have an APK?
