@@ -42,4 +42,4 @@ Restart the program, selct and apk and then **wait 30 seconds before starting to
 _This error shouldn't appear anymore_
 
 ## Issues
-- If you start downgrading too soon after selecting an apk the program will throw an error
+- N/A
