@@ -35,7 +35,7 @@ It is possible by adding a version to `versions.json` (For that you need some kn
 
 ### `You haven't got <filename> to downgrade your App.`
 This means the downgrading of this app and version to the target version has been checked by trusted people but you don't have the downgrading file.
-You can find some links on https://github.com/ComputerElite/wiki/notthereyet . Just download the file and place it next to your exe (if you downloaded a zip file then first extract the zip)
+You should get a prompt where you can download the file if the download link has been added to the downgrade entry.
 
 ### `File is used by another process` aka long fat error
 Restart the program, selct and apk and then **wait 30 seconds before starting to downgrade**. The Error might not come anymore.
