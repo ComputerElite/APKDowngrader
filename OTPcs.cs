@@ -24,8 +24,8 @@ namespace OTP
             if (useLowMem)
             {
                 File.Delete(outputDirectory + Path.GetFileNameWithoutExtension(keyFile));
-                FileStream ifile = new FileStream(file, FileMode.Open);
-                FileStream kfile = new FileStream(keyFile, FileMode.Open);
+                FileStream ifile = new FileStream(file, FileMode.Open, FileAccess.Read);
+                FileStream kfile = new FileStream(keyFile, FileMode.Open, FileAccess.Read);
                 FileStream ofile = new FileStream(outputDirectory, FileMode.Append);
                 for (int i = 1; (long)i * (long)batches < ifile.Length + (long)batches; i++)
                 {

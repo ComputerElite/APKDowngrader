@@ -40,6 +40,9 @@ namespace Classes
     {
         public string SV { get; set; } = "1.14.0";
         public string TV { get; set; } = "1.13.2";
+        public string SSHA256 { get; set; } = "dfa40268dad7f13cae15c66948f5714cb0f407aedb88387e06a873acf3aaa74f";
+        public string TSHA256 { get; set; } = "29aa9a2511ccc6be634cd7887a273eb1b5538ed2ccb24442572adfa0e1e30854";
+        public string download { get; set; } = "";
         public string appid { get; set; } = "com.beatgames.beatsaber";
         //byte[] length for target
         public int TargetByteSize { get; set; } = 553331304;

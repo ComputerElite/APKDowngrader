@@ -24,6 +24,7 @@ using Version = Classes.Version;
 using System.Diagnostics;
 using Iteedee.ApkReader;
 using System.IO.Compression;
+using System.Security.Cryptography;
 using System.Threading;
 
 namespace Beat_Saber_downgrader
@@ -44,6 +45,7 @@ namespace Beat_Saber_downgrader
         public bool CreateFiles = false;
         public string exe = AppDomain.CurrentDomain.BaseDirectory;
         public string appid = "com.beatgames.beatsaber";
+        SHA256 Sha256 = SHA256.Create();
 
         public MainWindow()
         {
@@ -136,6 +138,20 @@ namespace Beat_Saber_downgrader
             }
         }
 
+        public String CalculateSHA256(string filename)
+        {
+            using (FileStream stream = File.OpenRead(filename))
+            {
+                Stopwatch s = Stopwatch.StartNew();
+                txtbox.AppendText("\nCalculating hash (SHA256)");
+                string hash = "";
+                foreach (byte b in Sha256.ComputeHash(stream)) hash += b.ToString("x2");
+                s.Stop();
+                txtbox.AppendText("\nCalculated hash (" + hash + ") in " + s.ElapsedMilliseconds + " ms");
+                return hash;
+            }
+        }
+
         public string GetAPKVersion(String apk)
         {
             Stopwatch s = Stopwatch.StartNew();
@@ -177,7 +193,7 @@ namespace Beat_Saber_downgrader
             return info.packageName;
         }
 
-        public bool CheckVersions(bool ignoreSV = false)
+        public bool CheckVersions(bool ignoreSV = false, bool showDownload = false)
         {
             foreach(String f in APKPath.Text.Split('|'))
             {
@@ -190,7 +206,7 @@ namespace Beat_Saber_downgrader
             }
             if (SV.Text == "" && !ignoreSV)
             {
-                txtbox.AppendText("\n\nPlease put in your SPK Version Version");
+                txtbox.AppendText("\n\nPlease put in your APK Version");
                 txtbox.ScrollToEnd();
                 return false;
             }
@@ -206,10 +222,36 @@ namespace Beat_Saber_downgrader
                 txtbox.ScrollToEnd();
                 return false;
             }
-            if(!CreateFiles && !ignoreSV && !File.Exists(versions.GetVersion(SV.Text, TV.Text, appid).GetDecrName()))
+            Version v = versions.GetVersion(SV.Text, TV.Text, appid);
+            if (!CreateFiles && !ignoreSV && !File.Exists(exe + "DowngradeFiles\\" + v.GetDecrName()))
             {
-                txtbox.AppendText("\n\nYou haven't got " + versions.GetVersion(SV.Text, TV.Text, appid).GetDecrName() + " to downgrade your App. Please search it e. g. under github.com/ComputerElite/wiki/");
-                txtbox.ScrollToEnd();
+                if(!showDownload || versions.GetVersion(SV.Text, TV.Text, appid).download == "")
+                {
+                    txtbox.AppendText("\n\nYou haven't got " + v.GetDecrName() + " to downgrade your App. Please search it e. g. under github.com/ComputerElite/wiki/");
+                    txtbox.ScrollToEnd();
+                } else
+                {
+                    if(!Directory.Exists(exe + "DowngradeFiles"))
+                    {
+                        Directory.CreateDirectory(exe + "DowngradeFiles");
+                    }
+                    MessageBoxResult r = MessageBox.Show("You haven't got " + versions.GetVersion(SV.Text, TV.Text, appid).GetDecrName() + " to downgrade your App. Do you want to download it?", "APK Downgrader", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    switch(r)
+                    {
+                        case MessageBoxResult.Yes:
+                            MessageBox.Show("I'll open the download page in your webbrowser once you clicked ok. Please download the files there and then put it in the folder named \"DowngradeFiles\" (I'll open that folder for you too). Once you finished click Start Downgrade again", "APK Downgrader");
+                            Process.Start(exe + "DowngradeFiles");
+                            Process.Start(v.download);
+                            txtbox.AppendText("\n\nPress Start Downgrade once you downloaded the downgrade file.");
+                            txtbox.ScrollToEnd();
+                            break;
+                        case MessageBoxResult.No:
+                            txtbox.AppendText("\n\nYou can't continue without the files. Aborting.");
+                            txtbox.ScrollToEnd();
+                            break;
+                    }
+                }
+                
                 return false;
             }
             return true;
@@ -255,7 +297,7 @@ namespace Beat_Saber_downgrader
 
         private void StartDowngrade()
         {
-            if (!CheckVersions()) return;
+            if (!CheckVersions(false, true)) return;
             try
             {
                 Stopwatch s = Stopwatch.StartNew();
@@ -263,16 +305,23 @@ namespace Beat_Saber_downgrader
                 String outputAPK = appid + "_" + TV.Text + ".apk";
                 if (CreateFiles)
                 {
-                    txtbox.AppendText("\n\nCreating decr file");
-                    txtbox.AppendText("\nXOR-ing " + SV.Text + " with " + TV.Text);
-                    txtbox.ScrollToEnd();
+                    txtbox.AppendText("\n\nCreating downgrade file");
+                    
                     string[] files = APKPath.Text.Split('|');
                     Version v = new Version();
+                    txtbox.AppendText("\nCreating Version info");
+                    txtbox.ScrollToEnd();
                     v.SV = SV.Text;
                     v.TV = TV.Text;
                     v.SourceByteSize = (int)new FileInfo(files[0]).Length;
                     v.TargetByteSize = (int)new FileInfo(files[1]).Length;
+                    txtbox.AppendText("\nCalculating SHA256 hashes for apks");
+                    txtbox.ScrollToEnd();
+                    v.SSHA256 = CalculateSHA256(files[0]);
+                    v.TSHA256 = CalculateSHA256(files[1]);
                     v.appid = appid;
+                    txtbox.AppendText("\nXOR-ing " + SV.Text + " with " + TV.Text);
+                    txtbox.ScrollToEnd();
                     if (v.SourceByteSize < v.TargetByteSize)
                     {
                         txtbox.AppendText("\n\nI'm sorry. Due to the source file has to be as big as the target one or bigger to stay legal-ish");
@@ -296,25 +345,57 @@ namespace Beat_Saber_downgrader
                     }
                     AllocConsole();
                     if (File.Exists(v.GetDecrName())) File.Delete(v.GetDecrName());
-                    d.DecryptOTPFile(files[0], files[1], v.GetDecrName(), true);
+                    d.DecryptOTPFile(files[0], files[1], exe + "DowngradeFiles\\" + v.GetDecrName(), true);
                     versions.versions.Add(v);
                     File.WriteAllText("versions.json", JsonSerializer.Serialize(versions, new JsonSerializerOptions { WriteIndented = true }));
+                    txtbox.AppendText("\nFeel free to add a download link to the json.");
+                    txtbox.ScrollToEnd();
                     FreeConsole();
                 }
                 else
                 {
                     txtbox.AppendText("\n\nDowngrading APK");
+                    txtbox.ScrollToEnd();
+                    Version v = versions.GetVersion(SV.Text, TV.Text, appid);
+                    String hash = CalculateSHA256(APKPath.Text);
+                    bool otherhash = false;
+                    if(hash.ToLower() != v.SSHA256.ToLower())
+                    {
+                        MessageBoxResult r = MessageBox.Show("Your APK doesn't match the hash (hashes are a unique ideifier for files which can be clculated. Same content = same hash) from the apk the person who made the downgrade file has. Do you want to continue (in worst case the downgraded file just won't work)?", "APK Downgrader", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                        if(r == MessageBoxResult.No)
+                        {
+                            txtbox.AppendText("\n\nAborted");
+                            txtbox.ScrollToEnd();
+                            return;
+                        }
+                        otherhash = true;
+                    }
                     txtbox.AppendText("\nXOR-ing APK with downgrade file");
+                    txtbox.ScrollToEnd();
                     AllocConsole();
-                    d.DecryptOTPFile(APKPath.Text, versions.GetVersion(SV.Text, TV.Text, appid).GetDecrName(), outputAPK, true);
+                    d.DecryptOTPFile(APKPath.Text, exe + "DowngradeFiles\\" + v.GetDecrName(), outputAPK, true);
                     FreeConsole();
                     txtbox.AppendText("\nRemoving tailing bytes");
+                    txtbox.ScrollToEnd();
                     FileInfo fi = new FileInfo(outputAPK);
                     FileStream fs = fi.Open(FileMode.Open);
 
-                    Version v = versions.GetVersion(SV.Text, TV.Text, appid);
                     fs.SetLength(v.TargetByteSize);
                     fs.Close();
+                    txtbox.AppendText("\nChecking hash");
+                    txtbox.ScrollToEnd();
+                    hash = CalculateSHA256(outputAPK);
+                    if (hash.ToLower() != v.TSHA256.ToLower())
+                    {
+                        if(otherhash)
+                        {
+                            txtbox.AppendText("\nAgain the downgraded APK has another hash as the person who created the downgrade file. Hope for the best.");
+                            txtbox.ScrollToEnd();
+                        } else
+                        {
+                            MessageBox.Show("Apparently an error occurred. The downgrade apk doesn't match the hash (hashes are a unique ideifier for files which can be clculated. Same content = same hash) of the person who created the downgrade files. Hope for the best.", "APK Downgrader", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        }
+                    }
                 }
 
 
