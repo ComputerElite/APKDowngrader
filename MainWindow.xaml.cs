@@ -26,6 +26,7 @@ using Iteedee.ApkReader;
 using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Threading;
+using System.Net;
 
 namespace Beat_Saber_downgrader
 {
@@ -53,8 +54,58 @@ namespace Beat_Saber_downgrader
 
             if (File.Exists(exe + "appid.txt")) appid = File.ReadAllText(exe + "appid.txt");
             else File.WriteAllText(exe + "appid.txt", appid);
+            Thread t = new Thread(() =>
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    txtbox.AppendText("\nAttempting to update downgrade database");
+                    txtbox.ScrollToEnd();
+                });
+                WebClient c = new WebClient();
+                try
+                {
+                    String vD = c.DownloadString("https://raw.githubusercontent.com/ComputerElite/APKDowngrader/main/versions.json");
+                    Versions v = JsonSerializer.Deserialize<Versions>(vD);
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        txtbox.AppendText("\nUpdating downgrade database");
+                        txtbox.ScrollToEnd();
+                    });
+                    Versions finished = new Versions();
 
-            if(File.Exists("versions.json")) versions = JsonSerializer.Deserialize<Versions>(File.ReadAllText("versions.json"));
+                    foreach(Version v1 in versions.versions)
+                    {
+                        bool found = false;
+                        foreach(Version v2 in v.versions)
+                        {
+                            if(v2 == v1)
+                            {
+                                found = true;
+                                finished.versions.Add(v2);
+                                break;
+                            }
+                        }
+                        if (!found) finished.versions.Add(v1);
+                    }
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        txtbox.AppendText("\nUpdated downgrade Database. Added " + (finished.versions.Count - versions.versions.Count) + " new downgrade entries.");
+                        txtbox.ScrollToEnd();
+                    });
+                    versions = finished;
+                    File.WriteAllText(exe + "versions.json", JsonSerializer.Serialize(versions)); ;
+                } catch
+                {
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        txtbox.AppendText("\nFailed to update downgrade database");
+                        txtbox.ScrollToEnd();
+                    });
+                }
+            });
+            t.Start();
+
+            if(File.Exists(exe + "versions.json")) versions = JsonSerializer.Deserialize<Versions>(File.ReadAllText(exe + "versions.json"));
         }
 
         public void APKChoose(object sender, RoutedEventArgs ev)
@@ -115,7 +166,7 @@ namespace Beat_Saber_downgrader
                     t.IsBackground = true;
                     t.Start();
                 }
-                else txtbox.AppendText("The APK(s) don't exist.");
+                else txtbox.AppendText("\n\nThe APK(s) don't exist.");
             }
             else if (files.Count == 1)
             {
@@ -134,7 +185,7 @@ namespace Beat_Saber_downgrader
                     t.IsBackground = true;
                     t.Start();
                 }
-                else txtbox.AppendText("Please select a valid APK");
+                else txtbox.AppendText("\nPlease select a valid APK");
             }
         }
 
@@ -409,7 +460,7 @@ namespace Beat_Saber_downgrader
             }
             catch (Exception e)
             {
-                txtbox.AppendText("An Error occurred:\n" + e.ToString());
+                txtbox.AppendText("\n\nAn Error occurred:\n" + e.ToString());
                 txtbox.ScrollToEnd();
             }
         }
