@@ -39,6 +39,7 @@ You can find some links on https://github.com/ComputerElite/wiki/notthereyet . J
 
 ### `File is used by another process` aka long fat error
 Restart the program, selct and apk and then **wait 30 seconds before starting to downgrade**. The Error might not come anymore.
+_This error shouldn't appear anymore_
 
 ## Issues
 - If you start downgrading too soon after selecting an apk the program will throw an error
