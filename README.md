@@ -44,5 +44,9 @@ _This error shouldn't appear anymore_
 ### `I'm sorry. Due to the source file having to be as big as the target one or bigger to not distribute game code I can't do that for you`
 Due to XOR-ing the files to generate downgrade files it is not possible to go from a e. g. 400MB file to a 500 MB file. As if so the downgrade file had to be 500 MB. But then the question comes how do I get from 400MB to 500MB without adding game code? Well the answer would be copying bytes. But I do not plan to implement that and just kepp this limitation.
 
+# I want my app removed from the supported downgrades List. What do I do?
+Simply open an GitHub Issue and I'll remove all entries of your App as soon as possible and will reject further submissins for your App.
+_Please provide a way to verify you own the app_
+
 ## Issues
 - N/A
