@@ -73,10 +73,10 @@ namespace Beat_Saber_downgrader
                     });
                     Versions finished = new Versions();
 
-                    foreach(Version v1 in versions.versions)
+                    foreach(Version v1 in v.versions)
                     {
                         bool found = false;
-                        foreach(Version v2 in v.versions)
+                        foreach(Version v2 in versions.versions)
                         {
                             if(v2 == v1)
                             {
