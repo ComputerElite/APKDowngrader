@@ -1,6 +1,8 @@
 # APKDowngrader
 An program to create and use downgrade/update files for apks
 
+Get the download from [Releases](https://github.com/ComputerElite/APKDowngrader/releases)
+
 # Please use [the wiki](https://github.com/ComputerElite/wiki/wiki/APK-Downgrader) for instructions and other info
 
 # I want my app removed from the supported downgrades List. What do I do?
