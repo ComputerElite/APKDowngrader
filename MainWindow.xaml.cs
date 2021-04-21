@@ -51,9 +51,10 @@ namespace Beat_Saber_downgrader
         public MainWindow()
         {
             InitializeComponent();
-
+            if (!Directory.Exists(exe + "DowngradeFiles")) Directory.CreateDirectory(exe + "DowngradeFiles");
             if (File.Exists(exe + "appid.txt")) appid = File.ReadAllText(exe + "appid.txt");
             else File.WriteAllText(exe + "appid.txt", appid);
+            if (File.Exists(exe + "versions.json")) versions = JsonSerializer.Deserialize<Versions>(File.ReadAllText(exe + "versions.json"));
             Thread t = new Thread(() =>
             {
                 this.Dispatcher.Invoke(() =>
@@ -72,16 +73,19 @@ namespace Beat_Saber_downgrader
                         txtbox.ScrollToEnd();
                     });
                     Versions finished = new Versions();
-
                     foreach(Version v1 in v.versions)
                     {
+                        finished.versions.Add(v1);
+                    }
+                    foreach (Version v1 in versions.versions)
+                    {
+                        
                         bool found = false;
-                        foreach(Version v2 in versions.versions)
+                        foreach (Version v2 in finished.versions)
                         {
-                            if(v2 == v1)
+                            if (v2.Equals(v1))
                             {
                                 found = true;
-                                finished.versions.Add(v2);
                                 break;
                             }
                         }
@@ -89,7 +93,7 @@ namespace Beat_Saber_downgrader
                     }
                     this.Dispatcher.Invoke(() =>
                     {
-                        txtbox.AppendText("\nUpdated downgrade Database. Added " + (finished.versions.Count - versions.versions.Count) + " new downgrade entries.");
+                        txtbox.AppendText("\nUpdated downgrade Database. Added " + (finished.versions.Count - versions.versions.Count) + " new downgrade entrie(s).");
                         txtbox.ScrollToEnd();
                     });
                     versions = finished;
@@ -103,9 +107,8 @@ namespace Beat_Saber_downgrader
                     });
                 }
             });
+            t.IsBackground = true;
             t.Start();
-
-            if(File.Exists(exe + "versions.json")) versions = JsonSerializer.Deserialize<Versions>(File.ReadAllText(exe + "versions.json"));
         }
 
         public void APKChoose(object sender, RoutedEventArgs ev)
@@ -160,6 +163,8 @@ namespace Beat_Saber_downgrader
                         {
                             SV.Text = apk1;
                             TV.Text = apk2;
+                            txtbox.AppendText("\n\nYou can now start downgrade creation via Start Downgrading");
+                            txtbox.ScrollToEnd();
                         });
                         CreateFiles = true;
                     });
@@ -212,9 +217,9 @@ namespace Beat_Saber_downgrader
             {
                 txtbox.AppendText("\n\nGetting APK version");
             });
-            a.GetEntry("AndroidManifest.xml").ExtractToFile("Androidmanifest.xml", true);
-            a.GetEntry("resources.arsc").ExtractToFile("resources.arsc", true);
-            ApkInfo info = apkReader.extractInfo(File.ReadAllBytes("AndroidManifest.xml"), File.ReadAllBytes("resources.arsc"));
+            a.GetEntry("AndroidManifest.xml").ExtractToFile(exe + "Androidmanifest.xml", true);
+            a.GetEntry("resources.arsc").ExtractToFile(exe + "resources.arsc", true);
+            ApkInfo info = apkReader.extractInfo(File.ReadAllBytes(exe + "AndroidManifest.xml"), File.ReadAllBytes(exe + "resources.arsc"));
             this.Dispatcher.Invoke(() =>
             {
                 s.Stop();
@@ -232,9 +237,9 @@ namespace Beat_Saber_downgrader
             {
                 txtbox.AppendText("\n\nGetting APK package name");
             });
-            a.GetEntry("AndroidManifest.xml").ExtractToFile("Androidmanifest.xml", true);
-            a.GetEntry("resources.arsc").ExtractToFile("resources.arsc", true);
-            ApkInfo info = apkReader.extractInfo(File.ReadAllBytes("AndroidManifest.xml"), File.ReadAllBytes("resources.arsc"));
+            a.GetEntry("AndroidManifest.xml").ExtractToFile(exe + "Androidmanifest.xml", true);
+            a.GetEntry("resources.arsc").ExtractToFile(exe + "resources.arsc", true);
+            ApkInfo info = apkReader.extractInfo(File.ReadAllBytes(exe + "AndroidManifest.xml"), File.ReadAllBytes(exe + "resources.arsc"));
             this.Dispatcher.Invoke(() =>
             {
                 s.Stop();
@@ -326,6 +331,13 @@ namespace Beat_Saber_downgrader
         {
 
             if (!CheckVersions(true)) return;
+            MessageBoxResult r = MessageBox.Show("Do you really want to proceed? If so I'll uninstall the app and hopefully install a downgraded version.", "APK Downgrader", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if(r == MessageBoxResult.No)
+            {
+                txtbox.AppendText("\n\nAborted");
+                txtbox.ScrollToEnd();
+                return;
+            }
             ADBInteractor i = new ADBInteractor();
             txtbox.AppendText("\n\nPulling APK");
             Stopwatch s = Stopwatch.StartNew();
@@ -348,6 +360,7 @@ namespace Beat_Saber_downgrader
 
         private void StartDowngrade()
         {
+            bool highRam = false; //Keyboard.IsKeyDown(Key.LeftShift);
             if (!CheckVersions(false, true)) return;
             try
             {
@@ -386,19 +399,19 @@ namespace Beat_Saber_downgrader
                         Random r = new Random();
                         byte[] random = new byte[v.SourceByteSize - v.TargetByteSize];
                         r.NextBytes(random);
-                        File.Copy(files[1], "tmp_APKAppended.apk", true);
-                        FileStream fs = new FileStream("tmp_APKAppended.apk", FileMode.Append);
-                        files[1] = "tmp_APKAppended.apk";
+                        File.Copy(files[1], exe + "tmp_APKAppended.apk", true);
+                        FileStream fs = new FileStream(exe + "tmp_APKAppended.apk", FileMode.Append);
+                        files[1] = exe + "tmp_APKAppended.apk";
                         fs.Write(random, 0, random.Length);
                         fs.Flush();
                         fs.Close();
                         txtbox.AppendText("\nAdjusted File size. Appended " + random.Length + " bytes to Target APK copy");
                     }
                     AllocConsole();
-                    if (File.Exists(v.GetDecrName())) File.Delete(v.GetDecrName());
-                    d.DecryptOTPFile(files[0], files[1], exe + "DowngradeFiles\\" + v.GetDecrName(), true);
+                    if (File.Exists(exe + "DowngradeFiles\\" + v.GetDecrName())) File.Delete(exe + "DowngradeFiles\\" + v.GetDecrName());
+                    d.DecryptOTPFile(files[0], files[1], exe + "DowngradeFiles\\" + v.GetDecrName(), !highRam);
                     versions.versions.Add(v);
-                    File.WriteAllText("versions.json", JsonSerializer.Serialize(versions, new JsonSerializerOptions { WriteIndented = true }));
+                    File.WriteAllText(exe + "versions.json", JsonSerializer.Serialize(versions, new JsonSerializerOptions { WriteIndented = true }));
                     txtbox.AppendText("\nFeel free to add a download link to the json.");
                     txtbox.ScrollToEnd();
                     FreeConsole();
@@ -424,7 +437,7 @@ namespace Beat_Saber_downgrader
                     txtbox.AppendText("\nXOR-ing APK with downgrade file");
                     txtbox.ScrollToEnd();
                     AllocConsole();
-                    d.DecryptOTPFile(APKPath.Text, exe + "DowngradeFiles\\" + v.GetDecrName(), outputAPK, true);
+                    d.DecryptOTPFile(APKPath.Text, exe + "DowngradeFiles\\" + v.GetDecrName(), outputAPK, !highRam);
                     FreeConsole();
                     txtbox.AppendText("\nRemoving tailing bytes");
                     txtbox.ScrollToEnd();
@@ -448,12 +461,6 @@ namespace Beat_Saber_downgrader
                         }
                     }
                 }
-
-
-                //List<byte> file = File.ReadAllBytes(outputAPK).ToList<byte>();
-
-                //file.RemoveRange(v.TargetByteSize, file.Count - v.TargetByteSize);
-                //File.WriteAllBytes(outputAPK, file.ToArray());
                 s.Stop();
                 txtbox.AppendText("\n\nFinished in " + s.ElapsedMilliseconds + " ms");
                 txtbox.ScrollToEnd();
