@@ -48,7 +48,7 @@ namespace Beat_Saber_downgrader
         public string appid = "com.beatgames.beatsaber";
         public string repo = "github.com/ComputerElite/APKDowngrader";
         public string supportedVersions = "github.com/ComputerElite/wiki/wiki/APK-Downgrader#officially-supported-app-downgrades";
-        public string versionTag = "1.0.3";
+        public string versionTag = "1.0.4";
         bool draggable = true;
         SHA256 Sha256 = SHA256.Create();
 
@@ -125,6 +125,13 @@ namespace Beat_Saber_downgrader
                         this.Dispatcher.Invoke(() =>
                         {
                             txtbox.AppendText("\nA new update is available (Current: " + versionTag + "; New: " + ts[0].name + ")! Download it from " + repo);
+                            txtbox.ScrollToEnd();
+                        });
+                    } else
+                    {
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            txtbox.AppendText("\nNo update available");
                             txtbox.ScrollToEnd();
                         });
                     }
@@ -402,10 +409,10 @@ namespace Beat_Saber_downgrader
             APKPath.Text = exe + "apk.apk";
             SV.Text = GetAPKVersion(exe + "apk.apk");
             StartDowngrade();
-            txtbox.AppendText("\n\nInstalling app");
-            //i.adb("uninstall " + appid, txtbox);
+            txtbox.AppendText("\n\nUninstalling app");
+            i.adb("uninstall " + appid, txtbox);
             txtbox.AppendText("\n\nInstalling downgraded apk");
-            //i.adb("install \"" + exe + appid + "_" + TV.Text + ".apk\"", txtbox);
+            i.adb("install \"" + exe + appid + "_" + TV.Text + ".apk\"", txtbox);
             s.Stop();
             txtbox.AppendText("\n\nFinished downgrading in " + s.ElapsedMilliseconds + " ms");
         }
