@@ -46,6 +46,9 @@ namespace Beat_Saber_downgrader
         public bool CreateFiles = false;
         public string exe = AppDomain.CurrentDomain.BaseDirectory;
         public string appid = "com.beatgames.beatsaber";
+        public string repo = "github.com/ComputerElite/APKDowngrader";
+        public string supportedVersions = "github.com/ComputerElite/wiki/wiki/APK-Downgrader#officially-supported-app-downgrades";
+        public string versionTag = "1.0.3";
         bool draggable = true;
         SHA256 Sha256 = SHA256.Create();
 
@@ -104,6 +107,32 @@ namespace Beat_Saber_downgrader
                     this.Dispatcher.Invoke(() =>
                     {
                         txtbox.AppendText("\nFailed to update downgrade database");
+                        txtbox.ScrollToEnd();
+                    });
+                }
+                try
+                {
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        txtbox.AppendText("\n\nTrying to check for updates");
+                        txtbox.ScrollToEnd();
+                    });
+                    c.Headers.Add("user-agent", "APKDowngrader/" + versionTag);
+                    String tags = c.DownloadString("https://api.github.com/repos/ComputerElite/APKDowngrader/tags");
+                    List<GitHubTag> ts = JsonSerializer.Deserialize<List<GitHubTag>>(tags);
+                    if(ts.Count > 0 && ts[0].name != versionTag)
+                    {
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            txtbox.AppendText("\nA new update is available (Current: " + versionTag + "; New: " + ts[0].name + ")! Download it from " + repo);
+                            txtbox.ScrollToEnd();
+                        });
+                    }
+                } catch (Exception e)
+                {
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        txtbox.AppendText("\nAn Error occurred while checking for updates." + e.ToString());
                         txtbox.ScrollToEnd();
                     });
                 }
@@ -220,7 +249,18 @@ namespace Beat_Saber_downgrader
             });
             a.GetEntry("AndroidManifest.xml").ExtractToFile(exe + "Androidmanifest.xml", true);
             a.GetEntry("resources.arsc").ExtractToFile(exe + "resources.arsc", true);
-            ApkInfo info = apkReader.extractInfo(File.ReadAllBytes(exe + "AndroidManifest.xml"), File.ReadAllBytes(exe + "resources.arsc"));
+            ApkInfo info = new ApkInfo();
+            try
+            {
+                info = apkReader.extractInfo(File.ReadAllBytes(exe + "AndroidManifest.xml"), File.ReadAllBytes(exe + "resources.arsc"));
+            } catch (Exception e)
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    txtbox.AppendText("\n\nAn Error occured while getting the APK Version. proceeding anyways:\n" + e.ToString());
+                    txtbox.ScrollToEnd();
+                });
+            };
             this.Dispatcher.Invoke(() =>
             {
                 s.Stop();
@@ -240,7 +280,19 @@ namespace Beat_Saber_downgrader
             });
             a.GetEntry("AndroidManifest.xml").ExtractToFile(exe + "Androidmanifest.xml", true);
             a.GetEntry("resources.arsc").ExtractToFile(exe + "resources.arsc", true);
-            ApkInfo info = apkReader.extractInfo(File.ReadAllBytes(exe + "AndroidManifest.xml"), File.ReadAllBytes(exe + "resources.arsc"));
+            ApkInfo info = new ApkInfo();
+            try
+            {
+                info = apkReader.extractInfo(File.ReadAllBytes(exe + "AndroidManifest.xml"), File.ReadAllBytes(exe + "resources.arsc"));
+            }
+            catch (Exception e)
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    txtbox.AppendText("\n\nAn Error occured while getting the APK Version. proceeding anyways:\n" + e.ToString());
+                    txtbox.ScrollToEnd();
+                });
+            };
             this.Dispatcher.Invoke(() =>
             {
                 s.Stop();
@@ -275,7 +327,7 @@ namespace Beat_Saber_downgrader
             }
             if (!CreateFiles && !versions.IsPresent(SV.Text, TV.Text, appid) && !ignoreSV || ignoreSV && !versions.IsPresent(TV.Text, appid))
             {
-                txtbox.AppendText("\n\nThe Version downgrade isn't available for those versions. Please check that your versions are following the version names. e. g. 1.14.0 or 1.13.2 for Beat Saber\n\nTo see supported versions vists github.com/ComputerElite/wiki/");
+                txtbox.AppendText("\n\nThe Version downgrade isn't available for those versions. Please check that your versions are following the version names. e. g. 1.14.0 or 1.13.2 for Beat Saber\n\nTo see supported versions vist " + supportedVersions);
                 txtbox.ScrollToEnd();
                 return false;
             }
@@ -339,9 +391,9 @@ namespace Beat_Saber_downgrader
                 return;
             }
             ADBInteractor i = new ADBInteractor();
-            txtbox.AppendText("\n\nPulling APK");
+            txtbox.AppendText("\n\nPulling APK (that might take a minute)");
             Stopwatch s = Stopwatch.StartNew();
-            if(!i.adb("pull " + i.adbS("shell pm path " + appid, txtbox) + " \"" + exe + "apk.apk\"", txtbox))
+            if (!i.adb("pull " + i.adbS("shell pm path " + appid, txtbox).Replace("package:", "").Replace(Environment.NewLine, "") + " \"" + exe + "apk.apk\"", txtbox))
             {
                 txtbox.AppendText("\n\nAborted");
                 txtbox.ScrollToEnd();
@@ -351,9 +403,9 @@ namespace Beat_Saber_downgrader
             SV.Text = GetAPKVersion(exe + "apk.apk");
             StartDowngrade();
             txtbox.AppendText("\n\nInstalling app");
-            i.adb("uninstall " + appid, txtbox);
+            //i.adb("uninstall " + appid, txtbox);
             txtbox.AppendText("\n\nInstalling downgraded apk");
-            i.adb("install \"" + exe + appid + "_" + TV.Text + ".apk\"", txtbox);
+            //i.adb("install \"" + exe + appid + "_" + TV.Text + ".apk\"", txtbox);
             s.Stop();
             txtbox.AppendText("\n\nFinished downgrading in " + s.ElapsedMilliseconds + " ms");
         }

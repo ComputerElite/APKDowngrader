@@ -70,4 +70,9 @@ namespace Classes
             return v.SV == this.SV && v.TV == this.TV && v.SSHA256 == this.SSHA256 && v.DSHA256 == this.DSHA256 && v.TSHA256 == this.TSHA256 && v.appid == this.appid && v.TargetByteSize == this.TargetByteSize && v.SourceByteSize == this.SourceByteSize;
         }
     }
+
+    public class GitHubTag
+    {
+        public string name { get; set; } = "";
+    }
 }

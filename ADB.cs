@@ -37,7 +37,6 @@ namespace ADB
                     case "adb100":
                         txtAppend = "\n\n\nAn error Occured (Code: ADB100). Check following:\n\n- You have adb installed.";
                         break;
-
                 }
             });
             t.Start();
@@ -56,7 +55,6 @@ namespace ADB
         public string adbThread(String Argument)
         {
             String User = System.Environment.GetEnvironmentVariable("USERPROFILE");
-
             foreach (String ADB in ADBPaths)
             {
                 ProcessStartInfo s = new ProcessStartInfo();
@@ -73,6 +71,7 @@ namespace ADB
                     {
                         String IPS = exeProcess.StandardOutput.ReadToEnd();
                         exeProcess.WaitForExit();
+                        Console.WriteLine(IPS);
                         if (IPS.Contains("no devices/emulators found"))
                         {
                             return "adb110";
