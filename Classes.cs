@@ -41,6 +41,7 @@ namespace Classes
         public string SV { get; set; } = "";
         public string TV { get; set; } = "";
         public string SSHA256 { get; set; } = "";
+        public string DSHA256 { get; set; } = "";
         public string TSHA256 { get; set; } = "";
         public string download { get; set; } = "";
         public string appid { get; set; } = "";
@@ -66,7 +67,7 @@ namespace Classes
         public override bool Equals(object obj)
         {
             Version v = (Version)obj;
-            return v.SV == this.SV && v.TV == this.TV && v.SSHA256 == this.SSHA256 && v.TSHA256 == this.TSHA256 && v.appid == this.appid && v.TargetByteSize == this.TargetByteSize && v.SourceByteSize == this.SourceByteSize;
+            return v.SV == this.SV && v.TV == this.TV && v.SSHA256 == this.SSHA256 && v.DSHA256 == this.DSHA256 && v.TSHA256 == this.TSHA256 && v.appid == this.appid && v.TargetByteSize == this.TargetByteSize && v.SourceByteSize == this.SourceByteSize;
         }
     }
 }

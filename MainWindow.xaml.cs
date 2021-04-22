@@ -46,6 +46,7 @@ namespace Beat_Saber_downgrader
         public bool CreateFiles = false;
         public string exe = AppDomain.CurrentDomain.BaseDirectory;
         public string appid = "com.beatgames.beatsaber";
+        bool draggable = true;
         SHA256 Sha256 = SHA256.Create();
 
         public MainWindow()
@@ -329,7 +330,6 @@ namespace Beat_Saber_downgrader
 
         private void AutoPull(object sender, RoutedEventArgs ev)
         {
-
             if (!CheckVersions(true)) return;
             MessageBoxResult r = MessageBox.Show("Do you really want to proceed? If so I'll uninstall the app and hopefully install a downgraded version.", "APK Downgrader", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if(r == MessageBoxResult.No)
@@ -341,19 +341,19 @@ namespace Beat_Saber_downgrader
             ADBInteractor i = new ADBInteractor();
             txtbox.AppendText("\n\nPulling APK");
             Stopwatch s = Stopwatch.StartNew();
-            if(!i.adb("pull " + i.adbS("shell pm path " + appid, txtbox) + " \"" + exe + "\\apk.apk\"", txtbox))
+            if(!i.adb("pull " + i.adbS("shell pm path " + appid, txtbox) + " \"" + exe + "apk.apk\"", txtbox))
             {
                 txtbox.AppendText("\n\nAborted");
                 txtbox.ScrollToEnd();
                 return;
             }
-            APKPath.Text = exe + "\\apk.apk";
-            SV.Text = GetAPKVersion(exe + "\\apk.apk");
+            APKPath.Text = exe + "apk.apk";
+            SV.Text = GetAPKVersion(exe + "apk.apk");
             StartDowngrade();
             txtbox.AppendText("\n\nInstalling app");
             i.adb("uninstall " + appid, txtbox);
             txtbox.AppendText("\n\nInstalling downgraded apk");
-            i.adb("install \"" + exe + "\\" + TV.Text + ".apk\"", txtbox);
+            i.adb("install \"" + exe + appid + "_" + TV.Text + ".apk\"", txtbox);
             s.Stop();
             txtbox.AppendText("\n\nFinished downgrading in " + s.ElapsedMilliseconds + " ms");
         }
@@ -410,6 +410,9 @@ namespace Beat_Saber_downgrader
                     AllocConsole();
                     if (File.Exists(exe + "DowngradeFiles\\" + v.GetDecrName())) File.Delete(exe + "DowngradeFiles\\" + v.GetDecrName());
                     d.DecryptOTPFile(files[0], files[1], exe + "DowngradeFiles\\" + v.GetDecrName(), !highRam);
+                    txtbox.AppendText("\nCalculating SHA256 for downgrade file");
+                    txtbox.ScrollToEnd();
+                    v.DSHA256 = CalculateSHA256(exe + "DowngradeFiles\\" + v.GetDecrName());
                     versions.versions.Add(v);
                     File.WriteAllText(exe + "versions.json", JsonSerializer.Serialize(versions, new JsonSerializerOptions { WriteIndented = true }));
                     txtbox.AppendText("\nFeel free to add a download link to the json.");
@@ -420,10 +423,29 @@ namespace Beat_Saber_downgrader
                 {
                     txtbox.AppendText("\n\nDowngrading APK");
                     txtbox.ScrollToEnd();
+                    if(!File.Exists(APKPath.Text))
+                    {
+                        txtbox.AppendText("\nThe APK you put in doesn't exist.");
+                        txtbox.ScrollToEnd();
+                        return;
+                    }
+                    appid = GetAPKPackageName(APKPath.Text);
                     Version v = versions.GetVersion(SV.Text, TV.Text, appid);
-                    String hash = CalculateSHA256(APKPath.Text);
+                    String hash = CalculateSHA256(exe + "DowngradeFiles\\" + v.GetDecrName());
                     bool otherhash = false;
-                    if(hash.ToLower() != v.SSHA256.ToLower())
+                    if(hash != v.DSHA256 && v.DSHA256 != "")
+                    {
+                        MessageBoxResult r = MessageBox.Show("Your Downloaded downgrade file doesn't match the hash (hashes are a unique ideifier for files which can be clculated. Same content = same hash) from the downgrade file the person who made the it has. Do you want to continue (in worst case the downgraded file just won't work)?", "APK Downgrader", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                        if (r == MessageBoxResult.No)
+                        {
+                            txtbox.AppendText("\n\nAborted");
+                            txtbox.ScrollToEnd();
+                            return;
+                        }
+                        otherhash = true;
+                    }
+                    hash = CalculateSHA256(APKPath.Text);
+                    if (hash.ToLower() != v.SSHA256.ToLower() && v.SSHA256 != "")
                     {
                         MessageBoxResult r = MessageBox.Show("Your APK doesn't match the hash (hashes are a unique ideifier for files which can be clculated. Same content = same hash) from the apk the person who made the downgrade file has. Do you want to continue (in worst case the downgraded file just won't work)?", "APK Downgrader", MessageBoxButton.YesNo, MessageBoxImage.Warning);
                         if(r == MessageBoxResult.No)
@@ -449,7 +471,7 @@ namespace Beat_Saber_downgrader
                     txtbox.AppendText("\nChecking hash");
                     txtbox.ScrollToEnd();
                     hash = CalculateSHA256(outputAPK);
-                    if (hash.ToLower() != v.TSHA256.ToLower())
+                    if (hash.ToLower() != v.TSHA256.ToLower() && v.TSHA256 != "")
                     {
                         if(otherhash)
                         {
@@ -470,6 +492,32 @@ namespace Beat_Saber_downgrader
                 txtbox.AppendText("\n\nAn Error occurred:\n" + e.ToString());
                 txtbox.ScrollToEnd();
             }
+        }
+
+        private void Drag(object sender, RoutedEventArgs e)
+        {
+            bool mouseIsDown = System.Windows.Input.Mouse.LeftButton == MouseButtonState.Pressed;
+
+
+            if (mouseIsDown)
+            {
+                if (draggable)
+                {
+                    this.DragMove();
+                }
+
+            }
+
+        }
+
+        public void noDrag(object sender, MouseEventArgs e)
+        {
+            draggable = false;
+        }
+
+        public void doDrag(object sender, MouseEventArgs e)
+        {
+            draggable = true;
         }
     }
 }
