@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Classes
 {
@@ -11,7 +12,7 @@ namespace Classes
             foreach (Version v in versions)
             {
                 
-                if (v.SV == SV && v.TV == TV && appid == v.appid || v.SV == TV && v.TV == SV && v.SourceByteSize == v.TargetByteSize && appid == v.appid) return true;
+                if (RemoveDotZero(v.SV) == RemoveDotZero(SV) && RemoveDotZero(v.TV) == RemoveDotZero(TV) && appid == v.appid || v.SV == TV && v.TV == SV && v.SourceByteSize == v.TargetByteSize && appid == v.appid) return true;
             }
             return false;
         }
@@ -20,17 +21,30 @@ namespace Classes
         {
             foreach (Version v in versions)
             {
-                if (v.TV == TV || v.SV == TV && v.SourceByteSize == v.TargetByteSize && appid == v.appid) return true;
+                if (RemoveDotZero(v.TV) == RemoveDotZero(TV) || RemoveDotZero(v.SV) == RemoveDotZero(TV) && v.SourceByteSize == v.TargetByteSize && appid == v.appid) return true;
             }
             return false;
+        }
+
+        public string RemoveDotZero(string input)
+        {
+            bool done = false;
+            while(!done)
+            {
+                if (input.EndsWith("0")) input = input.Substring(0, input.Length - 1);
+                else if (input.EndsWith(".")) input = input.Substring(0, input.Length - 1);
+                else done = true;
+            }
+            Console.WriteLine(input);
+            return input;
         }
 
         public Version GetVersion(string SV, string TV, string appid)
         {
             foreach (Version v in versions)
             {
-                if (v.SV == SV && v.TV == TV && appid == v.appid) return v;
-                else if (v.SV == TV && v.TV == SV && v.SourceByteSize == v.TargetByteSize && appid == v.appid) return v;
+                if (RemoveDotZero(v.SV) == RemoveDotZero(SV) && RemoveDotZero(v.TV) == RemoveDotZero(TV) && appid == v.appid) return v;
+                else if (RemoveDotZero(v.SV) == RemoveDotZero(TV) && RemoveDotZero(v.TV) == RemoveDotZero(SV) && v.SourceByteSize == v.TargetByteSize && appid == v.appid) return v;
             }
             return null;
         }

@@ -48,7 +48,7 @@ namespace Beat_Saber_downgrader
         public string appid = "com.beatgames.beatsaber";
         public string repo = "github.com/ComputerElite/APKDowngrader";
         public string supportedVersions = "github.com/ComputerElite/wiki/wiki/APK-Downgrader#officially-supported-app-downgrades";
-        public string versionTag = "1.0.4";
+        public string versionTag = "1.0.5";
         bool draggable = true;
         SHA256 Sha256 = SHA256.Create();
 
@@ -185,7 +185,7 @@ namespace Beat_Saber_downgrader
                         String apk2 = GetAPKVersion(files[1]);
                         String apkp1 = GetAPKPackageName(files[0]);
                         String apkp2 = GetAPKPackageName(files[1]);
-                        if(apkp1 != apkp2 && !Keyboard.IsKeyDown(Key.LeftCtrl))
+                        if (apkp1 != apkp2 && !Keyboard.IsKeyDown(Key.LeftCtrl))
                         {
                             txtbox.AppendText("\n\nSelect 2 apps with the same package id. Those are not the same app.");
                             txtbox.ScrollToEnd();
@@ -247,13 +247,13 @@ namespace Beat_Saber_downgrader
 
         public string GetAPKVersion(String apk)
         {
-            Stopwatch s = Stopwatch.StartNew();
-            ApkReader apkReader = new ApkReader();
-            ZipArchive a = ZipFile.OpenRead(apk);
             this.Dispatcher.Invoke(() =>
             {
                 txtbox.AppendText("\n\nGetting APK version");
             });
+            Stopwatch s = Stopwatch.StartNew();
+            ApkReader apkReader = new ApkReader();
+            ZipArchive a = ZipFile.OpenRead(apk);
             a.GetEntry("AndroidManifest.xml").ExtractToFile(exe + "Androidmanifest.xml", true);
             a.GetEntry("resources.arsc").ExtractToFile(exe + "resources.arsc", true);
             ApkInfo info = new ApkInfo();
@@ -358,7 +358,7 @@ namespace Beat_Saber_downgrader
                             MessageBox.Show("I'll open the download page in your webbrowser once you clicked ok. Please download the files there and then put it in the folder named \"DowngradeFiles\" (I'll open that folder for you too). Once you finished click Start Downgrade again", "APK Downgrader");
                             Process.Start(exe + "DowngradeFiles");
                             Process.Start(v.download);
-                            txtbox.AppendText("\n\nPress Start Downgrade once you downloaded the downgrade file.");
+                            txtbox.AppendText("\n\nPress Start Downgrade once you downloaded and moved the downgrade file intoy \"DowngradeFiles\".");
                             txtbox.ScrollToEnd();
                             break;
                         case MessageBoxResult.No:
@@ -376,7 +376,7 @@ namespace Beat_Saber_downgrader
         private void Check(object sender, RoutedEventArgs ev)
         {
             if (!CheckVersions()) return;
-            txtbox.AppendText("\n\nYup you can downgrade this version as you wanted.");
+            txtbox.AppendText("\n\nYup you can downgrade to this version.");
             txtbox.ScrollToEnd();
         }
 
@@ -541,6 +541,9 @@ namespace Beat_Saber_downgrader
                             MessageBox.Show("Apparently an error occurred. The downgrade apk doesn't match the hash (hashes are a unique ideifier for files which can be clculated. Same content = same hash) of the person who created the downgrade files. Hope for the best.", "APK Downgrader", MessageBoxButton.OK, MessageBoxImage.Warning);
                         }
                     }
+                    txtbox.AppendText("\nSelecting downgraded APK in explorer");
+                    txtbox.ScrollToEnd();
+                    Process.Start("explorer.exe", "/select," + outputAPK);
                 }
                 s.Stop();
                 txtbox.AppendText("\n\nFinished in " + s.ElapsedMilliseconds + " ms");

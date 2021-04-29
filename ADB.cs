@@ -39,6 +39,7 @@ namespace ADB
                         break;
                 }
             });
+            t.IsBackground = true;
             t.Start();
             while (txtAppend == "N/A" && returnValue == false)
             {
@@ -113,6 +114,7 @@ namespace ADB
                         break;
                 }
             });
+            t.IsBackground = true;
             t.Start();
             while (txtAppend == "N/A" && returnValue == "Error")
             {
