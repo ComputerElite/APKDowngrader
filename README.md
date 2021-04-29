@@ -9,7 +9,7 @@ Get the download from [Releases](https://github.com/ComputerElite/APKDowngrader/
 - [officially Supported apps](https://github.com/ComputerElite/wiki/wiki/APK-Downgrader#officially-supported-app-downgrades)
 
 # I want my app removed from the supported downgrades List. What do I do?
-Simply open an [GitHub Issue](https://github.com/ComputerElite/APKDowngrader/issues) and I'll remove all entries of your App as soon as possible and will reject further submissins for your App.
+Simply open an [GitHub Issue](https://github.com/ComputerElite/APKDowngrader/issues/new?assignees=ComputerElite&labels=App+Removal&template=app-removal.md&title=%5BApp+Removal%5D) and I'll remove all entries of your App as soon as possible and will reject further submissins for your App.
 _Please provide a way to verify you own the app_
 
 ## Issues
