@@ -46,6 +46,7 @@ namespace Beat_Saber_downgrader
         {
             InitializeComponent();
             if (!Directory.Exists(exe + "DowngradeFiles")) Directory.CreateDirectory(exe + "DowngradeFiles");
+            if (!Directory.Exists(exe + "DowngradedAPKs")) Directory.CreateDirectory(exe + "DowngradedAPKs");
             if (File.Exists(exe + "appid.txt")) appid = File.ReadAllText(exe + "appid.txt");
             else File.WriteAllText(exe + "appid.txt", appid);
             if (File.Exists(exe + "versions.json")) versions = JsonSerializer.Deserialize<Versions>(File.ReadAllText(exe + "versions.json"));
@@ -139,7 +140,6 @@ namespace Beat_Saber_downgrader
                     {
                         c.DownloadFile("https://github.com/jmacd/xdelta-gpl/releases/download/v3.0.10/xdelta3-x86_64-3.0.10.exe.zip", exe + "xdelta3.exe.zip");
                         foreach(ZipArchiveEntry e in ZipFile.OpenRead(exe + "xdelta3.exe.zip").Entries) if(e.Name.ToLower().Contains("xdelta")) e.ExtractToFile(exe + "xdelta3.exe", true);
-                        File.Delete(exe + "xdelta3.exe.zip");
                         this.Dispatcher.Invoke(() =>
                         {
                             txtbox.AppendText("\nDownloaded XDelta3.exe");
@@ -154,7 +154,10 @@ namespace Beat_Saber_downgrader
                         });
                     }
                     
-                    
+                    try
+                    {
+                        File.Delete(exe + "xdelta3.exe.zip");
+                    } catch { }
                 }
             });
             t.IsBackground = true;
@@ -438,7 +441,8 @@ namespace Beat_Saber_downgrader
             {
                 Stopwatch s = Stopwatch.StartNew();
                 Decrypter d = new Decrypter();
-                String outputAPK = appid + "_" + TV.Text + ".apk";
+                if (!Directory.Exists(exe + "DowngradedAPKs")) Directory.CreateDirectory(exe + "DowngradedAPKs");
+                String outputAPK = exe + "DowngradedAPKs\\" + appid + "_" + TV.Text + ".apk";
                 if (CreateFiles)
                 {
                     txtbox.AppendText("\n\nCreating downgrade file");
