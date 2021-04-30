@@ -13,7 +13,7 @@ Simply open an [GitHub Issue](https://github.com/ComputerElite/APKDowngrader/iss
 _Please provide a way to verify you own the app_
 
 # XDelta3
-Also thank the creators of [XDelta3](https://github.com/jmacd/xdelta-gpl) as their tool is also used to create downgrades and downgrade your APK depending on which app and version you're downgrading.
+Thanks to the creators of [XDelta3](https://github.com/jmacd/xdelta-gpl) as their tool is also used to create downgrades and downgrade your APK depending on which app and version you're downgrading.
 
 ## Issues
 - N/A
