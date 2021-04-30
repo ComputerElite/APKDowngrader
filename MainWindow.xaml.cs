@@ -2,18 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using ADB;
 using OTP;
 using Classes;
@@ -48,7 +38,7 @@ namespace Beat_Saber_downgrader
         public string appid = "com.beatgames.beatsaber";
         public string repo = "github.com/ComputerElite/APKDowngrader";
         public string supportedVersions = "github.com/ComputerElite/wiki/wiki/APK-Downgrader#officially-supported-app-downgrades";
-        public string versionTag = "1.0.5";
+        public string versionTag = "1.2.0";
         bool draggable = true;
         SHA256 Sha256 = SHA256.Create();
 
@@ -71,11 +61,6 @@ namespace Beat_Saber_downgrader
                 {
                     String vD = c.DownloadString("https://raw.githubusercontent.com/ComputerElite/APKDowngrader/main/versions.json");
                     Versions v = JsonSerializer.Deserialize<Versions>(vD);
-                    this.Dispatcher.Invoke(() =>
-                    {
-                        txtbox.AppendText("\nUpdating downgrade database");
-                        txtbox.ScrollToEnd();
-                    });
                     Versions finished = new Versions();
                     foreach(Version v1 in v.versions)
                     {
@@ -139,9 +124,37 @@ namespace Beat_Saber_downgrader
                 {
                     this.Dispatcher.Invoke(() =>
                     {
-                        txtbox.AppendText("\nAn Error occurred while checking for updates." + e.ToString());
+                        txtbox.AppendText("\nAn Error occurred while checking for updates:\n" + e.ToString());
                         txtbox.ScrollToEnd();
                     });
+                }
+                if (!File.Exists(exe + "xdelta3.exe"))
+                {
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        txtbox.AppendText("\nDownloading XDelta3.exe");
+                        txtbox.ScrollToEnd();
+                    });
+                    try
+                    {
+                        c.DownloadFile("https://github.com/jmacd/xdelta-gpl/releases/download/v3.0.10/xdelta3-x86_64-3.0.10.exe.zip", exe + "xdelta3.exe.zip");
+                        foreach(ZipArchiveEntry e in ZipFile.OpenRead(exe + "xdelta3.exe.zip").Entries) if(e.Name.ToLower().Contains("xdelta")) e.ExtractToFile(exe + "xdelta3.exe", true);
+                        File.Delete(exe + "xdelta3.exe.zip");
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            txtbox.AppendText("\nDownloaded XDelta3.exe");
+                            txtbox.ScrollToEnd();
+                        });
+                    } catch
+                    {
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            txtbox.AppendText("\nUnable to download XDelta3.exe");
+                            txtbox.ScrollToEnd();
+                        });
+                    }
+                    
+                    
                 }
             });
             t.IsBackground = true;
@@ -432,6 +445,8 @@ namespace Beat_Saber_downgrader
                     
                     string[] files = APKPath.Text.Split('|');
                     Version v = new Version();
+                    MessageBoxResult res = MessageBox.Show("Do you want to use XDelta3 to create the downgrade file (smaller end file; yes) or the old XOR method (big file size; no)", "APK Downgrader", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    bool useXDelta = res == MessageBoxResult.Yes;
                     txtbox.AppendText("\nCreating Version info");
                     txtbox.ScrollToEnd();
                     v.SV = SV.Text;
@@ -442,33 +457,54 @@ namespace Beat_Saber_downgrader
                     txtbox.ScrollToEnd();
                     v.SSHA256 = CalculateSHA256(files[0]);
                     v.TSHA256 = CalculateSHA256(files[1]);
+                    v.isXDelta3 = useXDelta;
                     v.appid = appid;
-                    txtbox.AppendText("\nXOR-ing " + SV.Text + " with " + TV.Text);
-                    txtbox.ScrollToEnd();
-                    if (v.SourceByteSize < v.TargetByteSize)
+                    String downgrFile = exe + "DowngradeFiles\\" + v.GetDecrName();
+                    if (useXDelta)
                     {
-                        txtbox.AppendText("\n\nI'm sorry. Due to the source file having to be as big as the target one or bigger to not distribute game code I can't do that for you");
+                        if (!XDeltaPresent()) return;
+                        txtbox.AppendText("\n\nRunning cmd.exe /c \"\"" + exe + "xdelta3.exe\" -c -s \"" + files[0] + "\" " + "\"" + files[1] + "\" > \"" + downgrFile + "\"\"\nPlease be patient");
                         txtbox.ScrollToEnd();
-                        FreeConsole();
-                        return;
-                    }
-                    if (v.SourceByteSize != v.TargetByteSize)
+                        if (File.Exists(downgrFile)) File.Delete(downgrFile);
+                        Process p = Process.Start("cmd.exe", "/c \"\"" + exe + "xdelta3.exe\" -c -s \"" + files[0] + "\" " + "\"" + files[1] + "\" > \"" + downgrFile + "\"\"");
+                        p.WaitForExit();
+                        //File.WriteAllText(downgrFile, p.StandardOutput.ReadToEnd());
+                        if(!File.Exists(downgrFile) || new FileInfo(downgrFile).Length <= 0)
+                        {
+                            MessageBox.Show("XDelta3 was unable to create a downgrade. This isn't supposed to happen.", "APK Downgrader", MessageBoxButton.OK, MessageBoxImage.Error);
+                            txtbox.AppendText("\n\nAn Error occurred");
+                            txtbox.ScrollToEnd();
+                            return;
+                        }
+                    } else
                     {
-                        txtbox.AppendText("\n\nCopying and adjusting File size.");
-                        Random r = new Random();
-                        byte[] random = new byte[v.SourceByteSize - v.TargetByteSize];
-                        r.NextBytes(random);
-                        File.Copy(files[1], exe + "tmp_APKAppended.apk", true);
-                        FileStream fs = new FileStream(exe + "tmp_APKAppended.apk", FileMode.Append);
-                        files[1] = exe + "tmp_APKAppended.apk";
-                        fs.Write(random, 0, random.Length);
-                        fs.Flush();
-                        fs.Close();
-                        txtbox.AppendText("\nAdjusted File size. Appended " + random.Length + " bytes to Target APK copy");
+                        txtbox.AppendText("\nXOR-ing " + SV.Text + " with " + TV.Text);
+                        txtbox.ScrollToEnd();
+                        if (v.SourceByteSize < v.TargetByteSize)
+                        {
+                            txtbox.AppendText("\n\nI'm sorry. Due to the source file having to be as big as the target one or bigger to not distribute game code I can't do that for you");
+                            txtbox.ScrollToEnd();
+                            FreeConsole();
+                            return;
+                        }
+                        if (v.SourceByteSize != v.TargetByteSize)
+                        {
+                            txtbox.AppendText("\n\nCopying and adjusting File size.");
+                            Random r = new Random();
+                            byte[] random = new byte[v.SourceByteSize - v.TargetByteSize];
+                            r.NextBytes(random);
+                            File.Copy(files[1], exe + "tmp_APKAppended.apk", true);
+                            FileStream fs = new FileStream(exe + "tmp_APKAppended.apk", FileMode.Append);
+                            files[1] = exe + "tmp_APKAppended.apk";
+                            fs.Write(random, 0, random.Length);
+                            fs.Flush();
+                            fs.Close();
+                            txtbox.AppendText("\nAdjusted File size. Appended " + random.Length + " bytes to Target APK copy");
+                        }
+                        AllocConsole();
+                        if (File.Exists(exe + "DowngradeFiles\\" + v.GetDecrName())) File.Delete(exe + "DowngradeFiles\\" + v.GetDecrName());
+                        d.DecryptOTPFile(files[0], files[1], exe + "DowngradeFiles\\" + v.GetDecrName(), !highRam);
                     }
-                    AllocConsole();
-                    if (File.Exists(exe + "DowngradeFiles\\" + v.GetDecrName())) File.Delete(exe + "DowngradeFiles\\" + v.GetDecrName());
-                    d.DecryptOTPFile(files[0], files[1], exe + "DowngradeFiles\\" + v.GetDecrName(), !highRam);
                     txtbox.AppendText("\nCalculating SHA256 for downgrade file");
                     txtbox.ScrollToEnd();
                     v.DSHA256 = CalculateSHA256(exe + "DowngradeFiles\\" + v.GetDecrName());
@@ -494,7 +530,7 @@ namespace Beat_Saber_downgrader
                     bool otherhash = false;
                     if(hash != v.DSHA256 && v.DSHA256 != "")
                     {
-                        MessageBoxResult r = MessageBox.Show("Your Downloaded downgrade file doesn't match the hash (hashes are a unique ideifier for files which can be clculated. Same content = same hash) from the downgrade file the person who made the it has. Do you want to continue (in worst case the downgraded file just won't work)?", "APK Downgrader", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                        MessageBoxResult r = MessageBox.Show("Your Downloaded downgrade file doesn't match the hash (hashes are a unique ideifier for files which can be clculated. Same content = same hash) from the downgrade file the person who made the it has. Do you want to continue (in worst case the downgraded file just won't work or not exist)?", "APK Downgrader", MessageBoxButton.YesNo, MessageBoxImage.Warning);
                         if (r == MessageBoxResult.No)
                         {
                             txtbox.AppendText("\n\nAborted");
@@ -506,6 +542,13 @@ namespace Beat_Saber_downgrader
                     hash = CalculateSHA256(APKPath.Text);
                     if (hash.ToLower() != v.SSHA256.ToLower() && v.SSHA256 != "")
                     {
+                        if (v.isXDelta3)
+                        {
+                            MessageBox.Show("Your APK doesn't match the hash (hashes are a unique ideifier for files which can be clculated. Same content = same hash) from the apk the person who made the downgrade file has. Since it uses XDelta3 to downgrade your APK I can't continue.", "APK Downgrader", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            txtbox.AppendText("\n\nAborted");
+                            txtbox.ScrollToEnd();
+                            return;
+                        }
                         MessageBoxResult r = MessageBox.Show("Your APK doesn't match the hash (hashes are a unique ideifier for files which can be clculated. Same content = same hash) from the apk the person who made the downgrade file has. Do you want to continue (in worst case the downgraded file just won't work)?", "APK Downgrader", MessageBoxButton.YesNo, MessageBoxImage.Warning);
                         if(r == MessageBoxResult.No)
                         {
@@ -515,18 +558,34 @@ namespace Beat_Saber_downgrader
                         }
                         otherhash = true;
                     }
-                    txtbox.AppendText("\nXOR-ing APK with downgrade file");
-                    txtbox.ScrollToEnd();
-                    AllocConsole();
-                    d.DecryptOTPFile(APKPath.Text, exe + "DowngradeFiles\\" + v.GetDecrName(), outputAPK, !highRam);
-                    FreeConsole();
-                    txtbox.AppendText("\nRemoving tailing bytes");
-                    txtbox.ScrollToEnd();
-                    FileInfo fi = new FileInfo(outputAPK);
-                    FileStream fs = fi.Open(FileMode.Open);
+                    if (v.isXDelta3)
+                    {
+                        if (!XDeltaPresent()) return;
+                        txtbox.AppendText("\nExecuting cmd.exe /c \"\"" + exe + "xdelta3.exe\" -d -f -s \"" + APKPath.Text + "\" \"" + exe + "DowngradeFiles\\" + v.GetDecrName() + "\" \"" + outputAPK + "\"\"");
+                        txtbox.ScrollToEnd();
+                        Process.Start("cmd.exe", "/c \"\"" + exe + "xdelta3.exe\" -d -f -s \"" + APKPath.Text + "\" \"" + exe + "DowngradeFiles\\" + v.GetDecrName() + "\"m\"" + outputAPK + "\"\"");
+                        if (!File.Exists(outputAPK) || File.Exists(outputAPK) && new FileInfo(outputAPK).Length <= 0)
+                        {
+                            MessageBox.Show("XDelta3 was unable to downgrade your APK. This isn't supposed to happen.", "APK Downgrader", MessageBoxButton.OK, MessageBoxImage.Error);
+                            txtbox.AppendText("\n\nAn Error occurred");
+                            txtbox.ScrollToEnd();
+                            return;
+                        }
+                    } else
+                    {
+                        txtbox.AppendText("\nXOR-ing APK with downgrade file");
+                        txtbox.ScrollToEnd();
+                        AllocConsole();
+                        d.DecryptOTPFile(APKPath.Text, exe + "DowngradeFiles\\" + v.GetDecrName(), outputAPK, !highRam);
+                        FreeConsole();
+                        txtbox.AppendText("\nRemoving tailing bytes");
+                        txtbox.ScrollToEnd();
+                        FileInfo fi = new FileInfo(outputAPK);
+                        FileStream fs = fi.Open(FileMode.Open);
 
-                    fs.SetLength(v.TargetByteSize);
-                    fs.Close();
+                        fs.SetLength(v.TargetByteSize);
+                        fs.Close();
+                    }
                     txtbox.AppendText("\nChecking hash");
                     txtbox.ScrollToEnd();
                     hash = CalculateSHA256(outputAPK);
@@ -554,6 +613,17 @@ namespace Beat_Saber_downgrader
                 txtbox.AppendText("\n\nAn Error occurred:\n" + e.ToString());
                 txtbox.ScrollToEnd();
             }
+        }
+
+        private bool XDeltaPresent()
+        {
+            if(!File.Exists(exe + "xdelta3.exe"))
+            {
+                txtbox.AppendText("\n\nXDelta3.exe doesn#t exist. Please restart the program to download it automatically.\n\nAborted.");
+                txtbox.ScrollToEnd();
+                return false;
+            }
+            return true;
         }
 
         private void Drag(object sender, RoutedEventArgs e)

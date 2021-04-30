@@ -12,7 +12,7 @@ namespace Classes
             foreach (Version v in versions)
             {
                 
-                if (RemoveDotZero(v.SV) == RemoveDotZero(SV) && RemoveDotZero(v.TV) == RemoveDotZero(TV) && appid == v.appid || v.SV == TV && v.TV == SV && v.SourceByteSize == v.TargetByteSize && appid == v.appid) return true;
+                if (RemoveDotZero(v.SV) == RemoveDotZero(SV) && RemoveDotZero(v.TV) == RemoveDotZero(TV) && appid == v.appid || !v.isXDelta3 && RemoveDotZero(v.SV) == RemoveDotZero(TV) && RemoveDotZero(v.TV) == RemoveDotZero(SV) && v.SourceByteSize == v.TargetByteSize && appid == v.appid) return true;
             }
             return false;
         }
@@ -21,7 +21,7 @@ namespace Classes
         {
             foreach (Version v in versions)
             {
-                if (RemoveDotZero(v.TV) == RemoveDotZero(TV) || RemoveDotZero(v.SV) == RemoveDotZero(TV) && v.SourceByteSize == v.TargetByteSize && appid == v.appid) return true;
+                if (RemoveDotZero(v.TV) == RemoveDotZero(TV) || !v.isXDelta3 && RemoveDotZero(v.SV) == RemoveDotZero(TV) && v.SourceByteSize == v.TargetByteSize && appid == v.appid) return true;
             }
             return false;
         }
@@ -59,6 +59,7 @@ namespace Classes
         public string TSHA256 { get; set; } = "";
         public string download { get; set; } = "";
         public string appid { get; set; } = "";
+        public bool isXDelta3 { get; set; } = false;
         //byte[] length for target
         public int TargetByteSize { get; set; } = 0;
         public int SourceByteSize { get; set; } = 0;
@@ -75,13 +76,13 @@ namespace Classes
 
         public string GetDecrName()
         {
-            return appid + "_" + SV + "TO" + TV + ".decr";
+            return isXDelta3 ? appid + "_" + SV + "TO" + TV + ".xdelta3" : appid + "_" + SV + "TO" + TV + ".decr";
         }
 
         public override bool Equals(object obj)
         {
             Version v = (Version)obj;
-            return v.SV == this.SV && v.TV == this.TV && v.SSHA256 == this.SSHA256 && v.DSHA256 == this.DSHA256 && v.TSHA256 == this.TSHA256 && v.appid == this.appid && v.TargetByteSize == this.TargetByteSize && v.SourceByteSize == this.SourceByteSize;
+            return v.SV == this.SV && v.TV == this.TV && v.SSHA256 == this.SSHA256 && v.DSHA256 == this.DSHA256 && v.TSHA256 == this.TSHA256 && v.appid == this.appid && v.TargetByteSize == this.TargetByteSize && v.SourceByteSize == this.SourceByteSize && this.isXDelta3 == v.isXDelta3;
         }
     }
 

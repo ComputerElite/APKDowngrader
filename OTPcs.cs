@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using System.Windows.Controls;
 
 namespace OTP
 {
@@ -27,6 +24,7 @@ namespace OTP
                 FileStream ifile = new FileStream(file, FileMode.Open, FileAccess.Read);
                 FileStream kfile = new FileStream(keyFile, FileMode.Open, FileAccess.Read);
                 FileStream ofile = new FileStream(outputDirectory, FileMode.Append);
+                int code = 0;
                 for (int i = 1; (long)i * (long)batches < ifile.Length + (long)batches; i++)
                 {
                     int adjusted = (long)i * (long)batches < ifile.Length ? batches : (int)(ifile.Length % batches);
@@ -36,6 +34,10 @@ namespace OTP
                     {
                         tmp11[ii] = (byte)ifile.ReadByte();
                         tmp12[ii] = (byte)kfile.ReadByte();
+                        if(tmp11[ii] == 0x00 && tmp11[ii] != tmp12[ii] || tmp12[ii] == 0x00 && tmp11[ii] != tmp12[ii])
+                        {
+                            code++;
+                        }
                     }
 
                     //DecryptOTP
@@ -53,6 +55,7 @@ namespace OTP
                 ifile.Close();
                 kfile.Close();
                 ofile.Close();
+                Console.WriteLine("Contains " + code + " bytes of actual data one file contains scattered around the file");
             }
             else
             {
