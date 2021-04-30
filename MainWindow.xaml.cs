@@ -38,7 +38,7 @@ namespace Beat_Saber_downgrader
         public string appid = "com.beatgames.beatsaber";
         public string repo = "github.com/ComputerElite/APKDowngrader";
         public string supportedVersions = "github.com/ComputerElite/wiki/wiki/APK-Downgrader#officially-supported-app-downgrades";
-        public string versionTag = "1.1.0";
+        public string versionTag = "1.1.1";
         bool draggable = true;
         SHA256 Sha256 = SHA256.Create();
 
@@ -563,7 +563,8 @@ namespace Beat_Saber_downgrader
                         if (!XDeltaPresent()) return;
                         txtbox.AppendText("\nExecuting cmd.exe /c \"\"" + exe + "xdelta3.exe\" -d -f -s \"" + APKPath.Text + "\" \"" + exe + "DowngradeFiles\\" + v.GetDecrName() + "\" \"" + outputAPK + "\"\"");
                         txtbox.ScrollToEnd();
-                        Process.Start("cmd.exe", "/c \"\"" + exe + "xdelta3.exe\" -d -f -s \"" + APKPath.Text + "\" \"" + exe + "DowngradeFiles\\" + v.GetDecrName() + "\"m\"" + outputAPK + "\"\"");
+                        Process p = Process.Start("cmd.exe", "/c \"\"" + exe + "xdelta3.exe\" -d -f -s \"" + APKPath.Text + "\" \"" + exe + "DowngradeFiles\\" + v.GetDecrName() + "\" \"" + outputAPK + "\"\"");
+                        p.WaitForExit();
                         if (!File.Exists(outputAPK) || File.Exists(outputAPK) && new FileInfo(outputAPK).Length <= 0)
                         {
                             MessageBox.Show("XDelta3 was unable to downgrade your APK. This isn't supposed to happen.", "APK Downgrader", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -619,7 +620,7 @@ namespace Beat_Saber_downgrader
         {
             if(!File.Exists(exe + "xdelta3.exe"))
             {
-                txtbox.AppendText("\n\nXDelta3.exe doesn#t exist. Please restart the program to download it automatically.\n\nAborted.");
+                txtbox.AppendText("\n\nXDelta3.exe doesn't exist. Please restart the program to download it automatically.\n\nAborted.");
                 txtbox.ScrollToEnd();
                 return false;
             }
