@@ -58,6 +58,7 @@ namespace Classes
         public string DSHA256 { get; set; } = "";
         public string TSHA256 { get; set; } = "";
         public string download { get; set; } = "";
+        public bool isDirectDownload { get; set; } = false;
         public string appid { get; set; } = "";
         public bool isXDelta3 { get; set; } = false;
         //byte[] length for target

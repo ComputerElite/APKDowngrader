@@ -38,7 +38,7 @@ namespace Beat_Saber_downgrader
         public string appid = "com.beatgames.beatsaber";
         public string repo = "github.com/ComputerElite/APKDowngrader";
         public string supportedVersions = "github.com/ComputerElite/wiki/wiki/APK-Downgrader#officially-supported-app-downgrades";
-        public string versionTag = "1.1.2";
+        public string versionTag = "1.1.3";
         bool draggable = true;
         SHA256 Sha256 = SHA256.Create();
 
@@ -357,9 +357,9 @@ namespace Beat_Saber_downgrader
             Version v = versions.GetVersion(SV.Text, TV.Text, appid);
             if (!CreateFiles && !ignoreSV && !File.Exists(exe + "DowngradeFiles\\" + v.GetDecrName()))
             {
-                if(!showDownload || versions.GetVersion(SV.Text, TV.Text, appid).download == "")
+                if(!showDownload || v.download == "")
                 {
-                    txtbox.AppendText("\n\nYou haven't got " + v.GetDecrName() + " to downgrade your App. Please search it e. g. under github.com/ComputerElite/wiki/");
+                    txtbox.AppendText("\n\nYou haven't got " + v.GetDecrName() + " to downgrade your App. " + (v.download == "" ? "No download link has been provided." : "You can download it once you click Start Downgrade"));
                     txtbox.ScrollToEnd();
                 } else
                 {
@@ -367,15 +367,25 @@ namespace Beat_Saber_downgrader
                     {
                         Directory.CreateDirectory(exe + "DowngradeFiles");
                     }
-                    MessageBoxResult r = MessageBox.Show("You haven't got " + versions.GetVersion(SV.Text, TV.Text, appid).GetDecrName() + " to downgrade your App. Do you want to download it?", "APK Downgrader", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    MessageBoxResult r = MessageBox.Show("You haven't got " + v.GetDecrName() + " to downgrade your App. Do you want to download it?", "APK Downgrader", MessageBoxButton.YesNo, MessageBoxImage.Question);
                     switch(r)
                     {
                         case MessageBoxResult.Yes:
-                            MessageBox.Show("I'll open the download page in your webbrowser once you clicked ok. Please download the files there and then put it in the folder named \"DowngradeFiles\" (I'll open that folder for you too). Once you finished click Start Downgrade again", "APK Downgrader");
-                            Process.Start(exe + "DowngradeFiles");
-                            Process.Start(v.download);
-                            txtbox.AppendText("\n\nPress Start Downgrade once you downloaded and moved the downgrade file intoy \"DowngradeFiles\".");
-                            txtbox.ScrollToEnd();
+                            if(v.isDirectDownload)
+                            {
+                                txtbox.AppendText("\n\nDownloading File. Press Start Downgrad eagain once it finished");
+                                txtbox.ScrollToEnd();
+                                Downloadprogress DP = new Downloadprogress();
+                                DP.Show();
+                                DP.Download(v.download, v.GetDecrName(), exe + "DowngradeFiles\\" + v.GetDecrName());
+                            } else
+                            {
+                                MessageBox.Show("I'll open the download page in your webbrowser once you clicked ok. Please download the files there and then put it in the folder named \"DowngradeFiles\" (I'll open that folder for you too). Once you finished click Start Downgrade again", "APK Downgrader");
+                                Process.Start(exe + "DowngradeFiles");
+                                Process.Start(v.download);
+                                txtbox.AppendText("\n\nPress Start Downgrade once you downloaded and moved the downgrade file intoy \"DowngradeFiles\".");
+                                txtbox.ScrollToEnd();
+                            }
                             break;
                         case MessageBoxResult.No:
                             txtbox.AppendText("\n\nYou can't continue without the files. Aborting.");
@@ -428,7 +438,7 @@ namespace Beat_Saber_downgrader
             txtbox.AppendText("\n\nUninstalling app");
             i.adb("uninstall " + appid, txtbox);
             txtbox.AppendText("\n\nInstalling downgraded apk");
-            i.adb("install \"" + exe + appid + "_" + TV.Text + ".apk\"", txtbox);
+            i.adb("install \"" + exe + "DowngradedAPKs\\" + appid + "_" + TV.Text + ".apk\"", txtbox);
             s.Stop();
             txtbox.AppendText("\n\nFinished downgrading in " + s.ElapsedMilliseconds + " ms");
         }
