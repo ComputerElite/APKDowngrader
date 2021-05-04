@@ -1,0 +1,14 @@
+﻿<Window x:Class="APK_Downgrader_Update.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:APK_Downgrader_Update"
+        mc:Ignorable="d"
+        Title="APK Downgrader Update" Height="110" Width="400">
+    <Grid>
+        <AccessText x:Name="txtbox" HorizontalAlignment="Left" Height="24" VerticalAlignment="Top" Width="362" RenderTransformOrigin="0.5,0.5" Text="APK Downgrader" FontSize="14" Foreground="Black" Margin="10,16,0,0"/>
+        <ProgressBar x:Name="Progress" HorizontalAlignment="Left" Height="19" Margin="10,45,0,0" VerticalAlignment="Top" Width="362"/>
+
+    </Grid>
+</Window>
