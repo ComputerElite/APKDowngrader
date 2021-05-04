@@ -5,7 +5,7 @@ _Please note that the word `official` and `officially` are being used to represe
 
 Get the download from [Releases](https://github.com/ComputerElite/APKDowngrader/releases)
 
-# Please use [the wiki](https://github.com/ComputerElite/wiki/wiki/APK-Downgrader) for instructions and other info
+# Please use [the wiki](https://github.com/ComputerElite/wiki/wiki/APK-Downgrader) for instructions and other info (**Read before atempting to do anything** unless you know what you're doing)
 - [Disclaimer](https://github.com/ComputerElite/wiki/wiki/APK-Downgrader#disclaimer)
 - [officially Supported apps](https://github.com/ComputerElite/wiki/wiki/APK-Downgrader#officially-supported-app-downgrades)
 
