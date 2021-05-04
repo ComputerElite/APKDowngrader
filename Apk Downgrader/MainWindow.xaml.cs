@@ -732,7 +732,7 @@ namespace Beat_Saber_downgrader
             try
             {
                 WebClient c = new WebClient();
-                c.DownloadFile("", exe + "Update.exe");
+                c.DownloadFile("https://github.com/ComputerElite/APKDowngrader/raw/main/APK%20Downgrader%20Update.exe", exe + "Update.exe");
                 Process.Start(exe + "Update.exe");
                 Process.GetCurrentProcess().Kill();
             } catch
