@@ -201,7 +201,6 @@ namespace Beat_Saber_downgrader
 
         public void OpenWiki(object sender, RoutedEventArgs ev)
         {
-            throw new Exception("You're an idiot");
             Process.Start(wiki);
         }
 
