@@ -74,6 +74,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="RegexTemplates.cs" />
     <Page Include="Downloadprogress.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

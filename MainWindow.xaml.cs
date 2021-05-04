@@ -17,6 +17,8 @@ using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Net;
+using System.Threading.Tasks;
+using ComputerUtils.RegxTemplates;
 
 namespace Beat_Saber_downgrader
 {
@@ -38,13 +40,15 @@ namespace Beat_Saber_downgrader
         public string appid = "com.beatgames.beatsaber";
         public string repo = "github.com/ComputerElite/APKDowngrader";
         public string supportedVersions = "github.com/ComputerElite/wiki/wiki/APK-Downgrader#officially-supported-app-downgrades";
-        public string versionTag = "1.1.3";
+        public string wiki = "https://GitHub.com/ComputerElite/wiki/wiki/APK-Downgrader";
+        public string versionTag = "1.1.4";
         bool draggable = true;
         SHA256 Sha256 = SHA256.Create();
 
         public MainWindow()
         {
             InitializeComponent();
+            SetupExceptionHandlers();
             if (!Directory.Exists(exe + "DowngradeFiles")) Directory.CreateDirectory(exe + "DowngradeFiles");
             if (!Directory.Exists(exe + "DowngradedAPKs")) Directory.CreateDirectory(exe + "DowngradedAPKs");
             if (File.Exists(exe + "appid.txt")) appid = File.ReadAllText(exe + "appid.txt");
@@ -162,6 +166,43 @@ namespace Beat_Saber_downgrader
             });
             t.IsBackground = true;
             t.Start();
+        }
+
+        public void SetupExceptionHandlers()
+        {
+            AppDomain.CurrentDomain.UnhandledException += (s, e) =>
+            HandleExeption((Exception)e.ExceptionObject, "AppDomain.CurrentDomain.UnhandledException");
+
+            Application.Current.DispatcherUnhandledException += (s, e) =>
+            {
+                HandleExeption(e.Exception, "Application.Current.DispatcherUnhandledException");
+                e.Handled = true;
+            };
+
+            TaskScheduler.UnobservedTaskException += (s, e) =>
+            {
+                HandleExeption(e.Exception, "TaskScheduler.UnobservedTaskException");
+                e.SetObserved();
+            };
+        }
+
+        public void HandleExeption(Exception e, string source)
+        {
+            DateTime t = DateTime.Now;
+            String Save = "\n\nCrash of APK Downgrader has been catched at " + t.Day.ToString("d2") + "." + t.Month.ToString("d2") + "." + t.Year.ToString("d4") + "   " + t.Hour.ToString("d2") + ":" + t.Minute.ToString("d2") + ":" + t.Second.ToString("d2") + "." + t.Millisecond.ToString("d5");
+            Save += "\nUseful information:";
+            Save += "\n- Version: " + versionTag;
+            Save += "\n- Execution directory (Usernames Removed): " + RegexTemplates.RemoveUserName(exe);
+            Save += "\n\nException (Usernames Removed):\n   " + RegexTemplates.RemoveUserName(e.ToString());
+            File.AppendAllText(exe + "\\Crash.log", Save);
+            MessageBoxResult r = MessageBox.Show("Oops. Something has gone wrong as you shouldn't see that window. Please contect ComputerElite via GitHub issues or Discord and send then the file names Crash.log next to the exe. Exception:\n\n" + e.ToString(), "APK Downgrader - Exception Reporter", MessageBoxButton.OK, MessageBoxImage.Error);
+            Process.GetCurrentProcess().Kill();
+        }
+
+        public void OpenWiki(object sender, RoutedEventArgs ev)
+        {
+            throw new Exception("You're an idiot");
+            Process.Start(wiki);
         }
 
         public void APKChoose(object sender, RoutedEventArgs ev)
@@ -327,76 +368,86 @@ namespace Beat_Saber_downgrader
 
         public bool CheckVersions(bool ignoreSV = false, bool showDownload = false)
         {
-            foreach(String f in APKPath.Text.Split('|'))
+            try
             {
-                if (!ignoreSV && !File.Exists(f))
+                foreach (String f in APKPath.Text.Split('|'))
                 {
-                    txtbox.AppendText("\n\nPlease put in/choose your apk");
+                    if (!ignoreSV && !File.Exists(f))
+                    {
+                        txtbox.AppendText("\n\nPlease put in/choose your apk");
+                        txtbox.ScrollToEnd();
+                        return false;
+                    }
+                }
+                if (SV.Text == "" && !ignoreSV)
+                {
+                    txtbox.AppendText("\n\nPlease put in your APK Version");
                     txtbox.ScrollToEnd();
                     return false;
                 }
-            }
-            if (SV.Text == "" && !ignoreSV)
-            {
-                txtbox.AppendText("\n\nPlease put in your APK Version");
-                txtbox.ScrollToEnd();
-                return false;
-            }
-            if (TV.Text == "")
-            {
-                txtbox.AppendText("\n\nPlease put in your target Version");
-                txtbox.ScrollToEnd();
-                return false;
-            }
-            if (!CreateFiles && !versions.IsPresent(SV.Text, TV.Text, appid) && !ignoreSV || ignoreSV && !versions.IsPresent(TV.Text, appid))
-            {
-                txtbox.AppendText("\n\nThe Version downgrade isn't available for those versions. Please check that your versions are following the version names. e. g. 1.14.0 or 1.13.2 for Beat Saber\n\nTo see supported versions vist " + supportedVersions);
-                txtbox.ScrollToEnd();
-                return false;
-            }
-            Version v = versions.GetVersion(SV.Text, TV.Text, appid);
-            if (!CreateFiles && !ignoreSV && !File.Exists(exe + "DowngradeFiles\\" + v.GetDecrName()))
-            {
-                if(!showDownload || v.download == "")
+                if (TV.Text == "")
                 {
-                    txtbox.AppendText("\n\nYou haven't got " + v.GetDecrName() + " to downgrade your App. " + (v.download == "" ? "No download link has been provided." : "You can download it once you click Start Downgrade"));
+                    txtbox.AppendText("\n\nPlease put in your target Version");
                     txtbox.ScrollToEnd();
-                } else
-                {
-                    if(!Directory.Exists(exe + "DowngradeFiles"))
-                    {
-                        Directory.CreateDirectory(exe + "DowngradeFiles");
-                    }
-                    MessageBoxResult r = MessageBox.Show("You haven't got " + v.GetDecrName() + " to downgrade your App. Do you want to download it?", "APK Downgrader", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                    switch(r)
-                    {
-                        case MessageBoxResult.Yes:
-                            if(v.isDirectDownload)
-                            {
-                                txtbox.AppendText("\n\nDownloading File. Press Start Downgrad eagain once it finished");
-                                txtbox.ScrollToEnd();
-                                Downloadprogress DP = new Downloadprogress();
-                                DP.Show();
-                                DP.Download(v.download, v.GetDecrName(), exe + "DowngradeFiles\\" + v.GetDecrName());
-                            } else
-                            {
-                                MessageBox.Show("I'll open the download page in your webbrowser once you clicked ok. Please download the files there and then put it in the folder named \"DowngradeFiles\" (I'll open that folder for you too). Once you finished click Start Downgrade again", "APK Downgrader");
-                                Process.Start(exe + "DowngradeFiles");
-                                Process.Start(v.download);
-                                txtbox.AppendText("\n\nPress Start Downgrade once you downloaded and moved the downgrade file intoy \"DowngradeFiles\".");
-                                txtbox.ScrollToEnd();
-                            }
-                            break;
-                        case MessageBoxResult.No:
-                            txtbox.AppendText("\n\nYou can't continue without the files. Aborting.");
-                            txtbox.ScrollToEnd();
-                            break;
-                    }
+                    return false;
                 }
-                
+                if (!CreateFiles && !versions.IsPresent(SV.Text, TV.Text, appid) && !ignoreSV || ignoreSV && !versions.IsPresent(TV.Text, appid))
+                {
+                    txtbox.AppendText("\n\nThe Version downgrade isn't available for those versions. Please check that your versions are following the version names. e. g. 1.14.0 or 1.13.2 for Beat Saber\n\nTo see supported versions vist " + supportedVersions);
+                    txtbox.ScrollToEnd();
+                    return false;
+                }
+                Version v = versions.GetVersion(SV.Text, TV.Text, appid);
+                if (!CreateFiles && !ignoreSV && !File.Exists(exe + "DowngradeFiles\\" + v.GetDecrName()))
+                {
+                    if (!showDownload || v.download == "")
+                    {
+                        txtbox.AppendText("\n\nYou haven't got " + v.GetDecrName() + " to downgrade your App. " + (v.download == "" ? "No download link has been provided." : "You can download it once you click Start Downgrade"));
+                        txtbox.ScrollToEnd();
+                    }
+                    else
+                    {
+                        if (!Directory.Exists(exe + "DowngradeFiles"))
+                        {
+                            Directory.CreateDirectory(exe + "DowngradeFiles");
+                        }
+                        MessageBoxResult r = MessageBox.Show("You haven't got " + v.GetDecrName() + " to downgrade your App. Do you want to download it?", "APK Downgrader", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                        switch (r)
+                        {
+                            case MessageBoxResult.Yes:
+                                if (v.isDirectDownload)
+                                {
+                                    txtbox.AppendText("\n\nDownloading File. Press Start Downgrade again once the download finished");
+                                    txtbox.ScrollToEnd();
+                                    Downloadprogress DP = new Downloadprogress();
+                                    DP.Show();
+                                    DP.Download(v.download, v.GetDecrName(), exe + "DowngradeFiles\\" + v.GetDecrName());
+                                }
+                                else
+                                {
+                                    MessageBox.Show("I'll open the download page in your webbrowser once you clicked ok. Please download the files there and then put it in the folder named \"DowngradeFiles\" (I'll open that folder for you too). Once you finished click Start Downgrade again", "APK Downgrader");
+                                    Process.Start(exe + "DowngradeFiles");
+                                    Process.Start(v.download);
+                                    txtbox.AppendText("\n\nPress Start Downgrade once you downloaded and moved the downgrade file intoy \"DowngradeFiles\".");
+                                    txtbox.ScrollToEnd();
+                                }
+                                break;
+                            case MessageBoxResult.No:
+                                txtbox.AppendText("\n\nYou can't continue without the files. Aborting.");
+                                txtbox.ScrollToEnd();
+                                break;
+                        }
+                    }
+
+                    return false;
+                }
+                return true;
+            } catch (Exception e)
+            {
+                txtbox.AppendText("An Error occurred while checking if you can downgrade. Please contact ComputerElite:\n" + e.ToString());
+                txtbox.ScrollToEnd();
                 return false;
             }
-            return true;
         }
 
         private void Check(object sender, RoutedEventArgs ev)
