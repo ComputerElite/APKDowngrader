@@ -19,10 +19,10 @@
       "SSHA256": "0322e433369e45f793f2a90a6183a77eb7f85954384e7bd018c11001db03293d",
       "DSHA256": "bd8bc1cbc2a4adc14c1b65bd4571bb597f341c1e3c601ade5435c6cd48e7eac1",
       "TSHA256": "cb3157ada1c97e496549ff902b20178f68d803dedd441b5b98c15f6dc3929240",
-      "download": "https://mega.nz/file/NzxGiKqb#7c_hi4BJ7n9H6BsboK6TIHdUOaMl1ubVZ4LOGfbp3g0",
-      "isDirectDownload": false,
+      "download": "https://dl.dropbox.com/s/jbdewwlmuik1fka/com.beatgames.beatsaber_1.15.0TO1.13.2.xdelta3?dl=1",
+      "isDirectDownload": true,
       "appid": "com.beatgames.beatsaber",
-      "isXDelta3": false,
+      "isXDelta3": true,
       "TargetByteSize": 497495067,
       "SourceByteSize": 579562808
     },
