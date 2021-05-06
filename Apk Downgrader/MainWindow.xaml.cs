@@ -8,7 +8,6 @@ using ADB;
 using OTP;
 using Classes;
 using System.Text.Json;
-using Path = System.IO.Path;
 using System.Runtime.InteropServices;
 using Version = Classes.Version;
 using System.Diagnostics;
@@ -42,7 +41,7 @@ namespace Beat_Saber_downgrader
         public string repo = "github.com/ComputerElite/APKDowngrader";
         public string supportedVersions = "github.com/ComputerElite/wiki/wiki/APK-Downgrader#officially-supported-app-downgrades";
         public string wiki = "https://GitHub.com/ComputerElite/wiki/wiki/APK-Downgrader";
-        public string versionTag = "1.1.5";
+        public string versionTag = "1.1.6";
         bool draggable = true;
         SHA256 Sha256 = SHA256.Create();
 
@@ -290,7 +289,7 @@ namespace Beat_Saber_downgrader
             {
                 this.Dispatcher.Invoke(() =>
                 {
-                    txtbox.AppendText("\n\nAn Error occured while getting the APK Version. proceeding anyways:\n" + e.ToString());
+                    txtbox.AppendText("\n\nAn Error occured while getting the APK Version:\n" + e.ToString() + "\n\nYour APK may be corrupted. Please get a fresh copy of it and try again. If you used Auto downgrade then try again.");
                     txtbox.ScrollToEnd();
                 });
             };
@@ -322,7 +321,7 @@ namespace Beat_Saber_downgrader
             {
                 this.Dispatcher.Invoke(() =>
                 {
-                    txtbox.AppendText("\n\nAn Error occured while getting the APK Version. proceeding anyways:\n" + e.ToString());
+                    txtbox.AppendText("\n\nAn Error occured while getting the APK Version:\n" + e.ToString() + "\n\nYour APK may be corrupted.Please get a fresh copy of it and try again. If you used Auto downgrade then try again.");
                     txtbox.ScrollToEnd();
                 });
             };
@@ -436,7 +435,7 @@ namespace Beat_Saber_downgrader
         private void AutoPull(object sender, RoutedEventArgs ev)
         {
             if (!CheckVersions(true)) return;
-            MessageBoxResult r = MessageBox.Show("Do you really want to proceed? If so I'll uninstall the app and hopefully install a downgraded version.", "APK Downgrader", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            MessageBoxResult r = MessageBox.Show("Do you really want to proceed? If so I'll uninstall the app and hopefully install a downgraded version. This needs ADB (which is included with SideQuest) and your Android Device being connected to your PC via USB and detectable via ADB/Sidequest.", "APK Downgrader", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if(r == MessageBoxResult.No)
             {
                 txtbox.AppendText("\n\nAborted");
@@ -452,9 +451,17 @@ namespace Beat_Saber_downgrader
                 txtbox.ScrollToEnd();
                 return;
             }
+            if(!File.Exists(exe + "apk.apk"))
+            {
+                txtbox.AppendText("\n\nI was unable to pull the APK from your Android Device. Make sure your Android Device is connected via USB and developer mode enabled as well as USB debugging enabled (on some android devices USB Debugging will get enabled with Developer mode. e. g. on the Oculus Quest)");
+                txtbox.ScrollToEnd();
+                return;
+            }
             APKPath.Text = exe + "apk.apk";
             SV.Text = GetAPKVersion(exe + "apk.apk");
             StartDowngrade();
+            txtbox.AppendText("\n\nDeleting pulled APK");
+            if (File.Exists(exe + "apk.apk")) File.Delete(exe + "apk.apk");
             txtbox.AppendText("\n\nUninstalling app");
             i.adb("uninstall " + appid, txtbox);
             txtbox.AppendText("\n\nInstalling downgraded apk");
