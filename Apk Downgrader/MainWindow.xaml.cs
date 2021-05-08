@@ -41,7 +41,7 @@ namespace Beat_Saber_downgrader
         public string repo = "github.com/ComputerElite/APKDowngrader";
         public string supportedVersions = "github.com/ComputerElite/wiki/wiki/APK-Downgrader#officially-supported-app-downgrades";
         public string wiki = "https://GitHub.com/ComputerElite/wiki/wiki/APK-Downgrader";
-        public string versionTag = "1.1.6";
+        public string versionTag = "1.1.7";
         bool draggable = true;
         SHA256 Sha256 = SHA256.Create();
 
@@ -460,8 +460,8 @@ namespace Beat_Saber_downgrader
             APKPath.Text = exe + "apk.apk";
             SV.Text = GetAPKVersion(exe + "apk.apk");
             StartDowngrade();
-            txtbox.AppendText("\n\nDeleting pulled APK");
-            if (File.Exists(exe + "apk.apk")) File.Delete(exe + "apk.apk");
+            //txtbox.AppendText("\n\nDeleting pulled APK");
+            //if (File.Exists(exe + "apk.apk")) File.Delete(exe + "apk.apk");
             txtbox.AppendText("\n\nUninstalling app");
             i.adb("uninstall " + appid, txtbox);
             txtbox.AppendText("\n\nInstalling downgraded apk");
