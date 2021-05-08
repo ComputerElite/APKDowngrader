@@ -11,6 +11,8 @@ I want to add an downgrade:
 
 **Package Name:** `com.YourCompany.YourApp`
 
+**Download Link:** 
+
 **Downgrade:** APK Version to Target Version
 
 **JSON** (found in versions.json):
