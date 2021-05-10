@@ -41,7 +41,7 @@ namespace Beat_Saber_downgrader
         public string repo = "github.com/ComputerElite/APKDowngrader";
         public string supportedVersions = "github.com/ComputerElite/wiki/wiki/APK-Downgrader#officially-supported-app-downgrades";
         public string wiki = "https://GitHub.com/ComputerElite/wiki/wiki/APK-Downgrader";
-        public string versionTag = "1.1.7";
+        public string versionTag = "1.1.8";
         bool draggable = true;
         SHA256 Sha256 = SHA256.Create();
 
@@ -278,12 +278,12 @@ namespace Beat_Saber_downgrader
             });
             Stopwatch s = Stopwatch.StartNew();
             ApkReader apkReader = new ApkReader();
-            ZipArchive a = ZipFile.OpenRead(apk);
-            a.GetEntry("AndroidManifest.xml").ExtractToFile(exe + "Androidmanifest.xml", true);
-            a.GetEntry("resources.arsc").ExtractToFile(exe + "resources.arsc", true);
             ApkInfo info = new ApkInfo();
             try
             {
+                ZipArchive a = ZipFile.OpenRead(apk);
+                a.GetEntry("AndroidManifest.xml").ExtractToFile(exe + "Androidmanifest.xml", true);
+                a.GetEntry("resources.arsc").ExtractToFile(exe + "resources.arsc", true);
                 info = apkReader.extractInfo(File.ReadAllBytes(exe + "AndroidManifest.xml"), File.ReadAllBytes(exe + "resources.arsc"));
             } catch (Exception e)
             {
@@ -303,18 +303,18 @@ namespace Beat_Saber_downgrader
         }
         public string GetAPKPackageName(String apk)
         {
-            Stopwatch s = Stopwatch.StartNew();
-            ApkReader apkReader = new ApkReader();
-            ZipArchive a = ZipFile.OpenRead(apk);
             this.Dispatcher.Invoke(() =>
             {
                 txtbox.AppendText("\n\nGetting APK package name");
             });
-            a.GetEntry("AndroidManifest.xml").ExtractToFile(exe + "Androidmanifest.xml", true);
-            a.GetEntry("resources.arsc").ExtractToFile(exe + "resources.arsc", true);
+            Stopwatch s = Stopwatch.StartNew();
+            ApkReader apkReader = new ApkReader();
             ApkInfo info = new ApkInfo();
             try
             {
+                ZipArchive a = ZipFile.OpenRead(apk);
+                a.GetEntry("AndroidManifest.xml").ExtractToFile(exe + "Androidmanifest.xml", true);
+                a.GetEntry("resources.arsc").ExtractToFile(exe + "resources.arsc", true);
                 info = apkReader.extractInfo(File.ReadAllBytes(exe + "AndroidManifest.xml"), File.ReadAllBytes(exe + "resources.arsc"));
             }
             catch (Exception e)
