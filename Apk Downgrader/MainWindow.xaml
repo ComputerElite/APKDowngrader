@@ -21,6 +21,7 @@
         <Button ToolTip="Downgrade with just one click" ToolTipService.InitialShowDelay="1000" MouseEnter="noDrag" MouseLeave="doDrag" Click="AutoPull" Content="Auto Downgrade&#xD;&#xA;(needs target version)" HorizontalAlignment="Left" Margin="166,128,0,0" VerticalAlignment="Top" Width="143" Height="43" BorderBrush="#FFB94747" Background="#444444" Foreground="#cccccc"/>
         <Button ToolTip="Opens the wiki page" ToolTipService.InitialShowDelay="1000" MouseEnter="noDrag" MouseLeave="doDrag" Click="OpenWiki" Content="I need help" HorizontalAlignment="Left" Margin="166,237,0,0" VerticalAlignment="Top" Width="143" Height="23" BorderBrush="#FFB94747" Background="#444444" Foreground="#cccccc"/>
         <Button x:Name="UpdateB" ToolTip="Updates the program fully automatic" ToolTipService.InitialShowDelay="1000" MouseEnter="noDrag" MouseLeave="doDrag" Click="DoUpdate" Content="Update this program" HorizontalAlignment="Left" Margin="166,10,0,0" VerticalAlignment="Top" Width="143" Height="23" BorderBrush="#FFB94747" Background="#444444" Foreground="#cccccc"/>
+        <Button ToolTip="Opens a new window with all available downgrades" ToolTipService.InitialShowDelay="1000" MouseEnter="noDrag" MouseLeave="doDrag" Click="ShowVersions" Content="Show available downgrades" HorizontalAlignment="Left" Margin="10,209,0,0" VerticalAlignment="Top" Width="151" Height="23" BorderBrush="#FFB94747" Background="#444444" Foreground="#cccccc"/>
 
     </Grid>
 </Window>

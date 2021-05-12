@@ -48,6 +48,26 @@ namespace Classes
             }
             return null;
         }
+
+        public List<string> GetAppIDs()
+        {
+            List<string> apps = new List<string>();
+            foreach(Version v in this.versions)
+            {
+                if (!apps.Contains(v.appid)) apps.Add(v.appid);
+            }
+            return apps;
+        }
+
+        public List<Version> GetVersionsByAppID(string appID)
+        {
+            List<Version> versions = new List<Version>();
+            foreach (Version v in this.versions)
+            {
+                if (appID == v.appid) versions.Add(v);
+            }
+            return versions;
+        }
     }
 
     public class Version

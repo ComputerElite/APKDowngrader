@@ -173,6 +173,12 @@ namespace Beat_Saber_downgrader
             Process.Start(wiki);
         }
 
+        public void ShowVersions(object sender, RoutedEventArgs ev)
+        {
+            VersionShower s = new VersionShower(versions);
+            s.Show();
+        }
+
         public void APKChoose(object sender, RoutedEventArgs ev)
         {
             CreateFiles = false;
