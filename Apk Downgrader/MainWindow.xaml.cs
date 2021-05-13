@@ -41,7 +41,7 @@ namespace Beat_Saber_downgrader
         public string repo = "github.com/ComputerElite/APKDowngrader";
         public string supportedVersions = "github.com/ComputerElite/wiki/wiki/APK-Downgrader#officially-supported-app-downgrades";
         public string wiki = "https://GitHub.com/ComputerElite/wiki/wiki/APK-Downgrader";
-        public string versionTag = "1.1.9";
+        public string versionTag = "1.1.10";
         bool draggable = true;
         SHA256 Sha256 = SHA256.Create();
 
@@ -367,7 +367,7 @@ namespace Beat_Saber_downgrader
                 }
                 if (!CreateFiles && !versions.IsPresent(SV.Text, TV.Text, appid) && !ignoreSV || ignoreSV && !versions.IsPresent(TV.Text, appid))
                 {
-                    txtbox.AppendText("\n\nThe Version downgrade isn't available for those versions. Please check that your versions are following the version names. e. g. 1.14.0 or 1.13.2 for Beat Saber\n\nTo see supported versions vist " + supportedVersions);
+                    txtbox.AppendText("\n\nThe Version downgrade isn't available for those versions. Please check that your versions are following the version names. e. g. 1.14.0 or 1.13.2 for Beat Saber\n\nTo see supported versions click Show available downgrades");
                     txtbox.ScrollToEnd();
                     return false;
                 }
@@ -466,12 +466,30 @@ namespace Beat_Saber_downgrader
             APKPath.Text = exe + "apk.apk";
             SV.Text = GetAPKVersion(exe + "apk.apk");
             StartDowngrade();
-            //txtbox.AppendText("\n\nDeleting pulled APK");
-            //if (File.Exists(exe + "apk.apk")) File.Delete(exe + "apk.apk");
+            txtbox.AppendText("\n\nDeleting pulled APK");
+            if (File.Exists(exe + "apk.apk")) File.Delete(exe + "apk.apk");
+            bool appData = false;
+            if(MessageBox.Show("Do you want to keep your App Data? This can contain things as game saves and scores.", "APK Downgrader", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                appData = true;
+                txtbox.AppendText("\n\nBacking up App Data");
+                txtbox.ScrollToEnd();
+                if (Directory.Exists(exe + "data")) Directory.Delete(exe + "data", true);
+                Directory.CreateDirectory(exe + "data");
+                i.adb("pull \"/sdcard/Android/data/" + appid + "\" \"" + exe + "data\"", txtbox);
+            }
             txtbox.AppendText("\n\nUninstalling app");
+            txtbox.ScrollToEnd();
             i.adb("uninstall " + appid, txtbox);
-            txtbox.AppendText("\n\nInstalling downgraded apk");
+            txtbox.AppendText("\nInstalling downgraded apk");
+            txtbox.ScrollToEnd();
             i.adb("install \"" + exe + "DowngradedAPKs\\" + appid + "_" + TV.Text + ".apk\"", txtbox);
+            if(appData)
+            {
+                txtbox.AppendText("\n\nRestoring App Data");
+                txtbox.ScrollToEnd();
+                i.adb("push \"" + exe + "data\\" + appid + "\" /sdcard/Android/data", txtbox);
+            }
             s.Stop();
             txtbox.AppendText("\n\nFinished downgrading in " + s.ElapsedMilliseconds + " ms");
         }
@@ -724,7 +742,7 @@ namespace Beat_Saber_downgrader
                 {
                     UpdateB.Content = btext;
                     UpdateB.Visibility = visible ? Visibility.Visible : Visibility.Hidden;
-                    txtbox.AppendText("\n\n" + text);
+                    txtbox.AppendText("\n" + text);
                     txtbox.ScrollToEnd();
                 });
             }
