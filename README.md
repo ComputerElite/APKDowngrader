@@ -1,5 +1,5 @@
 # APKDowngrader
-An program to create and use downgrade/update files for apks
+A program to create and use downgrade/update files for apks
 
 A Web Version which can only downgrade has been made: https://computerelite.github.io/tools/APK_Downgrader_Web/APKDowngrader.html
 
