@@ -41,7 +41,7 @@ namespace Beat_Saber_downgrader
         public string repo = "github.com/ComputerElite/APKDowngrader";
         public string supportedVersions = "github.com/ComputerElite/wiki/wiki/APK-Downgrader#officially-supported-app-downgrades";
         public string wiki = "https://GitHub.com/ComputerElite/wiki/wiki/APK-Downgrader";
-        public string versionTag = "1.1.11";
+        public string versionTag = "1.1.12";
         bool draggable = true;
         SHA256 Sha256 = SHA256.Create();
 
@@ -449,7 +449,7 @@ namespace Beat_Saber_downgrader
                 return;
             }
             ADBInteractor i = new ADBInteractor();
-            txtbox.AppendText("\n\nPulling APK (that might take a minute)");
+            txtbox.AppendText("\n\nPulling APK (this may take a minute)");
             Stopwatch s = Stopwatch.StartNew();
             if (!i.adb("pull " + i.adbS("shell pm path " + appid, txtbox).Replace("package:", "").Replace(Environment.NewLine, "") + " \"" + exe + "apk.apk\"", txtbox))
             {
@@ -465,9 +465,15 @@ namespace Beat_Saber_downgrader
             }
             APKPath.Text = exe + "apk.apk";
             SV.Text = GetAPKVersion(exe + "apk.apk");
-            StartDowngrade();
-            txtbox.AppendText("\n\nDeleting pulled APK");
-            //if (File.Exists(exe + "apk.apk")) File.Delete(exe + "apk.apk");
+            StartDowngrade(false);
+            String downgradedAPK = exe + "DowngradedAPKs\\" + appid + "_" + TV.Text + ".apk";
+            //txtbox.AppendText("\n\nDeleting pulled APK");
+            if (!File.Exists(downgradedAPK))
+            {
+                txtbox.AppendText("\n\nDowngraded APK does not exist. Aborting.");
+                txtbox.ScrollToEnd();
+                return;
+            }
             bool appData = false;
             if(MessageBox.Show("Do you want to keep your App Data? This can contain things as game saves and scores.", "APK Downgrader", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
@@ -483,7 +489,7 @@ namespace Beat_Saber_downgrader
             i.adb("uninstall " + appid, txtbox);
             txtbox.AppendText("\nInstalling downgraded apk");
             txtbox.ScrollToEnd();
-            i.adb("install \"" + exe + "DowngradedAPKs\\" + appid + "_" + TV.Text + ".apk\"", txtbox);
+            i.adb("install \"" + downgradedAPK + "\"", txtbox);
             if(appData)
             {
                 txtbox.AppendText("\n\nRestoring App Data");
@@ -492,9 +498,10 @@ namespace Beat_Saber_downgrader
             }
             s.Stop();
             txtbox.AppendText("\n\nFinished downgrading in " + s.ElapsedMilliseconds + " ms");
+            txtbox.ScrollToEnd();
         }
 
-        private void StartDowngrade()
+        private void StartDowngrade(bool selectApk = true)
         {
             bool highRam = false; //Keyboard.IsKeyDown(Key.LeftShift);
             if (!CheckVersions(false, true)) return;
@@ -666,9 +673,12 @@ namespace Beat_Saber_downgrader
                             MessageBox.Show("Apparently an error occurred. The downgrade apk doesn't match the hash (hashes are a unique ideifier for files which can be clculated. Same content = same hash) of the person who created the downgrade files. Hope for the best.", "APK Downgrader", MessageBoxButton.OK, MessageBoxImage.Warning);
                         }
                     }
-                    txtbox.AppendText("\nSelecting downgraded APK in explorer");
-                    txtbox.ScrollToEnd();
-                    Process.Start("explorer.exe", "/select," + outputAPK);
+                    if(selectApk)
+                    {
+                        txtbox.AppendText("\nSelecting downgraded APK in explorer");
+                        txtbox.ScrollToEnd();
+                        Process.Start("explorer.exe", "/select," + outputAPK);
+                    }
                 }
                 s.Stop();
                 txtbox.AppendText("\n\nFinished in " + s.ElapsedMilliseconds + " ms");

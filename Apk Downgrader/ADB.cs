@@ -55,6 +55,7 @@ namespace ADB
             String User = System.Environment.GetEnvironmentVariable("USERPROFILE");
             foreach (String ADB in ADBPaths)
             {
+
                 ProcessStartInfo s = new ProcessStartInfo();
                 s.CreateNoWindow = true;
                 s.UseShellExecute = false;
