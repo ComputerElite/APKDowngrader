@@ -1,6 +1,19 @@
 {
   "versions": [
     {
+      "SV": "1.16.0",
+      "TV": "1.13.2",
+      "SSHA256": "f4630fdd485467aa907b4d86f0854cebd04625cf572e96143c48395b64aaf2c2",
+      "DSHA256": "6c04204acd9ac7b7a2b5ab83b2200fd82aadf820c71e8e5a063f2af9ea1aa5e8",
+      "TSHA256": "cb3157ada1c97e496549ff902b20178f68d803dedd441b5b98c15f6dc3929240",
+      "download": "https://mega.nz/file/ZywA2SBA#NuLilO9MN5VM3A0w60JURqSqpDyCsywlPkWRTRmt2RQ",
+      "isDirectDownload": false,
+      "appid": "com.beatgames.beatsaber",
+      "isXDelta3": true,
+      "TargetByteSize": 497495067,
+      "SourceByteSize": 686082343
+    },
+    {
       "SV": "1.15.0",
       "TV": "1.14.0",
       "SSHA256": "0322e433369e45f793f2a90a6183a77eb7f85954384e7bd018c11001db03293d",
