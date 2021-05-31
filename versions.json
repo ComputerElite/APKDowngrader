@@ -14,6 +14,19 @@
       "SourceByteSize": 675214906
     },
     {
+      "SV": "1.16.1",
+      "TV": "1.16.0",
+      "SSHA256": "c7ef640d52452cb7d6f0d3f7754e3498b6038b8c67dcba5370cc58ecc220fe74",
+      "DSHA256": "0f525acf292dce3a10e5b05fd46f27713271484e543edade2767a5e341161523",
+      "TSHA256": "f4630fdd485467aa907b4d86f0854cebd04625cf572e96143c48395b64aaf2c2",
+      "download": "https://mega.nz/file/A75yACLR#cqyhfHG41gHcU2IVIW2ZHT7YRFRr2V_6IWBz7pWomEg",
+      "isDirectDownload": false,
+      "appid": "com.beatgames.beatsaber",
+      "isXDelta3": true,
+      "TargetByteSize": 686082343,
+      "SourceByteSize": 675214906
+    },
+    {
       "SV": "1.16.0",
       "TV": "1.13.2",
       "SSHA256": "f4630fdd485467aa907b4d86f0854cebd04625cf572e96143c48395b64aaf2c2",
