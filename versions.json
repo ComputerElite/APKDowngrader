@@ -146,7 +146,6 @@
     {
       "SV": "1.34.0_6944535938",
       "TV": "1.28.0_4124311467",
-      "Annotation": "Only for Quest 2/Quest Pro and Quest 3",
       "SSHA256": "cb56cb06a5bc5b626c01b816bc26dcb4452c2c843a0f53ed633a1afd662e94a9",
       "DSHA256": "84eb96543cf2d21e51c32c8c7c8ef702e5b68b3b0059aa67ee13c2582c83bde2",
       "TSHA256": "258216edabbae77247eb9e9be36eb26050d88caebd7141b20b27cb1697dc67c2",
@@ -160,7 +159,6 @@
     {
       "SV": "1.34.0_6944535938",
       "TV": "1.28.0_4124311467",
-      "Annotation": "Only for Quest 1",
       "SSHA256": "fa3a67f6652dbec5dc1422442a208ff424b489ff5dca4e05e14804de10c452c0",
       "DSHA256": "afed991da93b1847d7c4c17072fa0503522c95ca0c7d4b5e518365401585f67d",
       "TSHA256": "258216edabbae77247eb9e9be36eb26050d88caebd7141b20b27cb1697dc67c2",
@@ -170,6 +168,45 @@
       "isXDelta3": true,
       "TargetByteSize": 934326813,
       "SourceByteSize": 1051787156
+    },
+    {
+      "SV": "1.34.0_6944535938",
+      "TV": "1.29.0_4466478251",
+      "SSHA256": "cb56cb06a5bc5b626c01b816bc26dcb4452c2c843a0f53ed633a1afd662e94a9",
+      "DSHA256": "917869fe7e0014c585f6ed71b915bbaa66ac384e08482c5c2ed3d066e2493c6b",
+      "TSHA256": "8b68cf6978a5bc70da9c6667e28b2dbdcc980b5effdd533fe6151d22cf182c97",
+      "download": "https://storage.phene.dev/xdelta/com.beatgames.beatsaber_1.34.0_6944535938TO1.29.0_4466478251.xdelta3",
+      "isDirectDownload": true,
+      "appid": "com.beatgames.beatsaber",
+      "isXDelta3": true,
+      "TargetByteSize": 942172040,
+      "SourceByteSize": 1052471094
+    },
+    {
+      "SV": "1.34.0_6944535938",
+      "TV": "1.33.0_6589161869",
+      "SSHA256": "cb56cb06a5bc5b626c01b816bc26dcb4452c2c843a0f53ed633a1afd662e94a9",
+      "DSHA256": "44ceb2f3a3853fc7da1031590f95472dd633127313910753d06beb36342c098b",
+      "TSHA256": "9940f50deccd3a47c8dcf35029ce5195169252c7ccd7221b0210a1e998ce00db",
+      "download": "https://storage.phene.dev/xdelta/com.beatgames.beatsaber_1.34.0_6944535938TO1.33.0_6589161869.xdelta3",
+      "isDirectDownload": true,
+      "appid": "com.beatgames.beatsaber",
+      "isXDelta3": true,
+      "TargetByteSize": 992585217,
+      "SourceByteSize": 1052471094
+    },
+    {
+      "SV": "1.34.0_6944535938",
+      "TV": "1.30.0_4936302759",
+      "SSHA256": "cb56cb06a5bc5b626c01b816bc26dcb4452c2c843a0f53ed633a1afd662e94a9",
+      "DSHA256": "aa92147693877e3c1056810042e1fab7e08a5aef70abe144401092fcfedb14d8",
+      "TSHA256": "cdd411783f578b7e4212c0ebc3b4eeddb3d3505855c6604928e4e5da0677a38b",
+      "download": "https://storage.phene.dev/xdelta/com.beatgames.beatsaber_1.34.0_6944535938TO1.30.0_4936302759.xdelta3",
+      "isDirectDownload": true,
+      "appid": "com.beatgames.beatsaber",
+      "isXDelta3": true,
+      "TargetByteSize": 962098059,
+      "SourceByteSize": 1052471094
     }
   ]
 }
