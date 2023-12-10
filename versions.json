@@ -146,6 +146,7 @@
     {
       "SV": "1.34.0_6944535938",
       "TV": "1.28.0_4124311467",
+      "Annotation": "Only for Quest 2/Quest Pro and Quest 3",
       "SSHA256": "cb56cb06a5bc5b626c01b816bc26dcb4452c2c843a0f53ed633a1afd662e94a9",
       "DSHA256": "84eb96543cf2d21e51c32c8c7c8ef702e5b68b3b0059aa67ee13c2582c83bde2",
       "TSHA256": "258216edabbae77247eb9e9be36eb26050d88caebd7141b20b27cb1697dc67c2",
@@ -159,6 +160,7 @@
     {
       "SV": "1.34.0_6944535938",
       "TV": "1.28.0_4124311467",
+      "Annotation": "Only for Quest 1",
       "SSHA256": "fa3a67f6652dbec5dc1422442a208ff424b489ff5dca4e05e14804de10c452c0",
       "DSHA256": "afed991da93b1847d7c4c17072fa0503522c95ca0c7d4b5e518365401585f67d",
       "TSHA256": "258216edabbae77247eb9e9be36eb26050d88caebd7141b20b27cb1697dc67c2",
