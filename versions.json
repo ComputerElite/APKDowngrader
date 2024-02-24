@@ -107,6 +107,20 @@
       "isXDelta3": true,
       "TargetByteSize": 934326813,
       "SourceByteSize": 1147612942
+    },
+    {
+      "SV": "1.34.6_7885260391",
+      "TV": "1.34.2_7115288407 ",
+      "Annotation": "Only for Quest 2, Pro and 3",
+      "SSHA256": "f1808010a96e35d1c5a848336ffcf251f4b78ca9a8481bc819c5b258c27bc629",
+      "DSHA256": "b2c4e4e9971cedd9cf10e77643103f72596eeb1b1d2e0dbb3b1cd6b45a288f8c",
+      "TSHA256": "74767c9f2395aea01b610902aeed9ed946db600e2a6760457eb61152e8cf2813",
+      "download": "https://cdn.phazed.xyz/Diffs/com.beatgames.beatsaber_1.34.6_7885260391TO1.34.2_7115288407.xdelta3",
+      "isDirectDownload": true,
+      "appid": "com.beatgames.beatsaber",
+      "isXDelta3": true,
+      "TargetByteSize": 1065164871,
+      "SourceByteSize": 1147612942
     }
   ]
 }
