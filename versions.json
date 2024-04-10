@@ -190,6 +190,19 @@
       "isXDelta3": true,
       "TargetByteSize": 934326813,
       "SourceByteSize": 47887534
+    },
+    {
+      "SV": "1.36.0_8486341502",
+      "TV": "1.28.0_4124311467",
+      "SSHA256": "4150713725bed1808a2afd46dcdc22628101bad7c6a34c2915147c0678babd6c",
+      "DSHA256": "91316eb0af5bc47b32468d45002110be1e52ab28e2a58ef640bbd4d3acab1aab",
+      "TSHA256": "258216edabbae77247eb9e9be36eb26050d88caebd7141b20b27cb1697dc67c2",
+      "download": "https://cdn.phaz.uk/Diffs/com.beatgames.beatsaber_1.36.0_8486341502TO1.28.0_4124311467-Q2.xdelta3",
+      "isDirectDownload": true,
+      "appid": "com.beatgames.beatsaber",
+      "isXDelta3": true,
+      "TargetByteSize": 934326813,
+      "SourceByteSize": 63338787
     }
   ]
 }
