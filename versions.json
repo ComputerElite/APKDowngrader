@@ -203,6 +203,41 @@
       "isXDelta3": true,
       "TargetByteSize": 934326813,
       "SourceByteSize": 63338787
+    },
+    {
+        "SV": "1.36.0_8486341502",
+        "TV": "1.35.0_8016709773",
+        "appid": "com.beatgames.beatsaber",
+        "otherFiles": [
+            {
+                "sourceFilename": "main.1188.com.beatgames.beatsaber.obb",
+                "diffFilename": "com.beatgames.beatsaber.1.36.0_8486341502TO1.35.0_8016709773.main.1188.com.beatgames.beatsaber.obb.xdelta3",
+                "outputFilename": "main.1130.com.beatgames.beatsaber.obb",
+                "type": 1,
+                "isXDelta3": true,
+                "TargetByteSize": 1109602760,
+                "DiffByteSize": 914367804,
+                "SourceByteSize": 1178429789,
+                "SSHA256": "ecc10a7ce1624ad7ff6d8be45456a46f6ce1831fb4ebcb770fa3542133879aa0",
+                "DSHA256": "e26063e0c73f1960181aea7a8380671595c64938955e66f0bf30b386c8f5539d",
+                "TSHA256": "6deac598fb916650671bb1b0d6f76ce33c8f233449e959d0f3691667e3218680",
+                "download": "https://cdn.phaz.uk/Diffs/com.beatgames.beatsaber.1.36.0_8486341502TO1.35.0_8016709773.main.1188.com.beatgames.beatsaber.obb.xdelta3",
+                "isDirectDownload": true
+            }
+        ],
+        "sourceFilename": "app.apk",
+        "diffFilename": "com.beatgames.beatsaber.1.36.0_8486341502TO1.35.0_8016709773.app.apk.xdelta3",
+        "outputFilename": "app.apk",
+        "type": 0,
+        "isXDelta3": true,
+        "TargetByteSize": 49104123,
+        "DiffByteSize": 48052293,
+        "SourceByteSize": 63338787,
+        "SSHA256": "4150713725bed1808a2afd46dcdc22628101bad7c6a34c2915147c0678babd6c",
+        "DSHA256": "d1c88a6a5bdd5cb7907b37080e9af8035bde48579441e93fdbfd4c5266a75276",
+        "TSHA256": "238c2e462d7a3cb55a8258df3afa31c0ad8061e327e35a8a16bcc2e56bb96b01",
+        "download": "https://cdn.phaz.uk/Diffs/com.beatgames.beatsaber.1.36.0_8486341502TO1.35.0_8016709773.app.apk.xdelta3",
+        "isDirectDownload": true
     }
   ]
 }
