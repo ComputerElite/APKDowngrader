@@ -238,6 +238,56 @@
         "TSHA256": "238c2e462d7a3cb55a8258df3afa31c0ad8061e327e35a8a16bcc2e56bb96b01",
         "download": "https://cdn.phaz.uk/Diffs/com.beatgames.beatsaber.1.36.0_8486341502TO1.35.0_8016709773.app.apk.xdelta3",
         "isDirectDownload": true
+    },
+    {
+      "SV": "1.36.1_8647505571",
+      "TV": "1.35.0_8016709773",
+      "Annotation": "Only for Quest 2, Pro and 3",
+      "appid": "com.beatgames.beatsaber",
+      "otherFiles": [
+          {
+              "sourceFilename": "main.1194.com.beatgames.beatsaber.obb",
+              "diffFilename": "com.beatgames.beatsaber.1.36.1_8647505571TO1.35.0_8016709773.main.1194.com.beatgames.beatsaber.obb.xdelta3",
+              "outputFilename": "main.1130.com.beatgames.beatsaber.obb",
+              "type": 1,
+              "isXDelta3": true,
+              "TargetByteSize": 1109602760,
+              "DiffByteSize": 913799465,
+              "SourceByteSize": 1178432715,
+              "SSHA256": "7e8f98de6a7d67a1297865eab9049e079ed65bf0d5d4cb19d5868bee0647f4ea",
+              "DSHA256": "d1bcdb1855d9e62b9a7779717ec2cbfaff9a7b46bc60cea884664595e82bb1d0",
+              "TSHA256": "6deac598fb916650671bb1b0d6f76ce33c8f233449e959d0f3691667e3218680",
+              "download": "https://storage.phene.dev/xdelta/obb/com.beatgames.beatsaber.1.36.1_8647505571TO1.35.0_8016709773.main.1194.com.beatgames.beatsaber.obb.xdelta3",
+              "isDirectDownload": true
+          }
+      ],
+      "sourceFilename": "app.apk",
+      "diffFilename": "com.beatgames.beatsaber.1.36.1_8647505571TO1.35.0_8016709773.app.apk.xdelta3",
+      "outputFilename": "app.apk",
+      "type": 0,
+      "isXDelta3": true,
+      "TargetByteSize": 49104123,
+      "DiffByteSize": 32439682,
+      "SourceByteSize": 50894184,
+      "SSHA256": "c2852601443c2ee93b615951f355943ec65e6cbfd48c9521ae674149e5367d9b",
+      "DSHA256": "871975969ad691e85165d5565a449a7921e80002f49f0cee828dd52744f72dba",
+      "TSHA256": "238c2e462d7a3cb55a8258df3afa31c0ad8061e327e35a8a16bcc2e56bb96b01",
+      "download": "https://storage.phene.dev/xdelta/com.beatgames.beatsaber.1.36.1_8647505571TO1.35.0_8016709773.app.apk.xdelta3",
+      "isDirectDownload": true
+    },
+    {
+      "SV": "1.36.1_8647505571",
+      "TV": "1.28.0_4124311467",
+      "Annotation": "Only for Quest 2, Pro and 3",
+      "SSHA256": "c2852601443c2ee93b615951f355943ec65e6cbfd48c9521ae674149e5367d9b",
+      "DSHA256": "38e51383bc594a77ba469a87d26c3fff309872ffd1b4d1deebda188113f745ec",
+      "TSHA256": "258216edabbae77247eb9e9be36eb26050d88caebd7141b20b27cb1697dc67c2",
+      "download": "com.beatgames.beatsaber_1.36.1_8647505571TO1.28.0_4124311467.xdelta3",
+      "isDirectDownload": false,
+      "appid": "com.beatgames.beatsaber",
+      "isXDelta3": true,
+      "TargetByteSize": 934326813,
+      "SourceByteSize": 50894184
     }
   ]
 }
