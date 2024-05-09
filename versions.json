@@ -288,6 +288,54 @@
         "isXDelta3": true,
         "TargetByteSize": 934326813,
         "SourceByteSize": 50894184
+      },
+      {
+        "SV": "1.36.2_8847700518",
+        "TV": "1.28.0_4124311467",
+        "SSHA256": "9b360ee76f199238e26ae70a939ce1524369617f811246a7b9782a03571322d3",
+        "DSHA256": "c31033dccaf2c966ca3a64fed34c441e8bef8bfe9459176f894b52168dce4861",
+        "TSHA256": "258216edabbae77247eb9e9be36eb26050d88caebd7141b20b27cb1697dc67c2",
+        "download": "https://cdn.phaz.uk/Diffs/com.beatgames.beatsaber_1.36.2_8847700518TO1.28.0_4124311467.xdelta3",
+        "isDirectDownload": false,
+        "appid": "com.beatgames.beatsaber",
+        "isXDelta3": true,
+        "TargetByteSize": 934326813,
+        "SourceByteSize": 51971432
+      },
+      {
+        "SV": "1.36.2_8847700518",
+        "TV": "1.35.0_8016709773",
+        "appid": "com.beatgames.beatsaber",
+        "otherFiles": [
+          {
+            "sourceFilename": "main.1218.com.beatgames.beatsaber.obb",
+            "diffFilename": "com.beatgames.beatsaber.1.36.2_8847700518TO1.35.0_8016709773.main.1218.com.beatgames.beatsaber.obb.xdelta3",
+            "outputFilename": "main.1130.com.beatgames.beatsaber.obb",
+            "type": 1,
+            "isXDelta3": true,
+            "TargetByteSize": 1109602760,
+            "DiffByteSize": 914404857,
+            "SourceByteSize": 1177275472,
+            "SSHA256": "4b196918022a4d9006b8400af0edec98ae785adc508a9fdd11cce8c0c6582f8c",
+            "DSHA256": "24e779392c774355dcad251f78ad81f3ff7f6cdb0d500dbd9d29435f6d4c617e",
+            "TSHA256": "6deac598fb916650671bb1b0d6f76ce33c8f233449e959d0f3691667e3218680",
+            "download": "https://cdn.phaz.uk/Diffs/com.beatgames.beatsaber.1.36.2_8847700518TO1.35.0_8016709773.main.1218.com.beatgames.beatsaber.obb.xdelta3",
+            "isDirectDownload": true
+          }
+        ],
+        "sourceFilename": "app.apk",
+        "diffFilename": "com.beatgames.beatsaber.1.36.2_8847700518TO1.35.0_8016709773.app.apk.xdelta3",
+        "outputFilename": "app.apk",
+        "type": 0,
+        "isXDelta3": true,
+        "TargetByteSize": 49104123,
+        "DiffByteSize": 0,
+        "SourceByteSize": 51971432,
+        "SSHA256": "9b360ee76f199238e26ae70a939ce1524369617f811246a7b9782a03571322d3",
+        "DSHA256": "edb58007e60fa2c0e7dc6368bbee78c26ba89a52e6f706ed79916e3548163f42",
+        "TSHA256": "238c2e462d7a3cb55a8258df3afa31c0ad8061e327e35a8a16bcc2e56bb96b01",
+        "download": "https://cdn.phaz.uk/Diffs/com.beatgames.beatsaber.1.36.2_8847700518TO1.35.0_8016709773.app.apk.xdelta3",
+        "isDirectDownload": true
       }
     ]
   }
