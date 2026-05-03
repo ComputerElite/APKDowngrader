@@ -1,3 +1,6 @@
+# Archived
+This program is no longer maintained as better downgrading methods exist. Please check [OculusDB](https://oculusdb.rui2015.me) and the [Beat Saber Modding Group wiki](https://bsmg.wiki/)
+
 # APKDowngrader
 A program to create and use downgrade/update files for apks
 
